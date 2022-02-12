@@ -1,4 +1,4 @@
-import React, { ReactNode, useState, useEffect } from 'react';
+import React, { ReactNode, useState, useEffect, useRef, useCallback } from 'react';
 import {
   IconButton,
   Image,
@@ -18,6 +18,7 @@ import {
   useDisclosure,
   BoxProps,
   FlexProps,
+  CircularProgress,
   ButtonGroup,
 } from '@chakra-ui/react';
 import {
@@ -32,33 +33,62 @@ import {
 import { IconType } from 'react-icons';
 import { ReactText } from 'react';
 import Music from './Components/Music';
+import InfiniteScroll from 'react-infinite-scroller';
 // import { calcRelativeAxisPosition } from 'framer-motion/types/projection/geometry/delta-calc';
 import axios from 'axios';
+// import useIntersectionObserver from './useIntersectionObserver';
 
-// interface LinkItemProps {
-//   name: string;
-//   icon: IconType;
-// }
-// const LinkItems: Array<LinkItemProps> = [
-//   { name: 'Home', icon: FiHome },
-//   { name: 'Trending', icon: FiTrendingUp },
-//   { name: 'Explore', icon: FiCompass },
-//   { name: 'Favourites', icon: FiStar },
-//   { name: 'Settings', icon: FiSettings },
-// ];
-const apiBaseURL = "https://api.c6h12o6.kr";
+// const apiBaseURL = "https://api.c6h12o6.kr";
+const apiBaseURL = "http://localhost:9090";
+
+const page_calculator = (width, height) => {
+  if (width >= 768) {
+    width = width - 240;
+  }
+  const per_width = parseInt(width / 155);
+  const per_height = parseInt(height / 205) + 1;
+  const per_page = per_width * per_height * 3;
+  localStorage.setItem('per_page', per_page);
+  return per_page;
+}
+
+function getWindowDimensions() {
+  const { innerWidth: width, innerHeight: height } = window;
+  return {
+    width,
+    height
+  };
+}
 
 export default function SimpleSidebar({ children }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [musicItems, setMusicItems] = useState([{"idx": 1}]);
+  const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
+
+  // contents list
+  // const currentPage = useRef(0);
+  const [musicItems, setMusicItems] = useState([]);
+  const [updating, setUpdating] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
 
   useEffect(() => {
-    loadAPI();
+    function handleResize() {
+      setWindowDimensions(getWindowDimensions());
+    }
+    console.log(windowDimensions);
+    page_calculator(windowDimensions.width, windowDimensions.height);
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('now_page', 1);
+    loadAPI2(1);
   }, [])
 
-  function loadAPI() {
+  function loadAPI(per_page = 40, page = 1) {
     axios
-      .get(apiBaseURL + "/music?per_page=2000")
+      .get(apiBaseURL + "/music?per_page=" + per_page + "&page=" + page)
       .then((Response)=>{
         if (Response.data.code === 'SUCCESS') {
           // console.log(Response.data.data.data);
@@ -68,8 +98,66 @@ export default function SimpleSidebar({ children }) {
     // console.log(dt);
   }
 
-  // useEffect
+  const loadAPI2 = useCallback(async ({ page = 1 }) => {
+      try {
+        let data;
+        await axios
+        .get(apiBaseURL + "/music?per_page=" + localStorage.getItem('per_page') + "&page=" + page)
+        .then((Response)=>{
+          if (Response.data.code === 'SUCCESS') {
+            // console.log(Response.data.data.data);
+            setMusicItems(Response.data.data.data);
+            data = Response.data.data.data;
+            // console.log(Response.data.data.rows);
+            // console.log(parseInt(Response.data.data.rows / localStorage.getItem('per_page') + 1));
+            // setTotalPage(parseInt(Response.data.data.rows / localStorage.getItem('per_page') + 1))
+            }
+        })
+        console.log(typeof(data));
+        return data;
+      } catch(e) {
+        // setError(e);
+      } finally {
+        // setLoading(false);
+      }
+  }, []);
 
+  const loadMoreAPI = async () => {
+    if(musicItems.length > 0 && !updating) {
+      // currentPage.current++;
+      setUpdating(true);
+      localStorage.setItem('now_page', parseInt(localStorage.getItem('now_page')) + 1)
+      const data = await loadAPI2({
+        // query: currentQuery.current,
+        page: localStorage.getItem('now_page')
+        // page: 
+      });
+      if (typeof(data) !== 'object') {
+        setHasMore(false);
+        return false;
+      }
+      console.log('more');
+      console.log([...musicItems, ...data]);
+      setMusicItems([...musicItems, ...data]);
+      setUpdating(false);
+    }
+  };
+
+  // useIntersectionObserver({
+  //   root: rootRef.current,
+  //   target: targetRef.current,
+  //   onIntersect: ([{isIntersecting}]) => {
+  //     // loadMoreAPI();
+  //     console.log(currentPage.current + ' / ' + totalPage);
+  //     if(
+  //       isIntersecting &&
+  //       !loading &&
+  //       currentPage.current < totalPage
+  //     ) {
+  //       loadMoreAPI();
+  //     }
+  //   }
+  // });
 
   return (
     <Box minH="100vh" bg={useColorModeValue('gray.100', 'gray.900')}>
@@ -92,30 +180,22 @@ export default function SimpleSidebar({ children }) {
       {/* mobilenav */}
       <MobileNav display={{ base: 'flex', md: 'none' }} onOpen={onOpen} />
       <Box ml={{ base: 0, md: 60 }} p="4">
-        <Flex justifyContent="center" flexDirection="row" flexWrap="wrap">
-          {
-            musicItems.map(item => {
-              return <Music apiData={item} key={item.idx}></Music>;
-            })
-          }
-          {/* <Music coverURL="dd"></Music>
-          <Music></Music>
-          <Music></Music>
-          <Music></Music>
-          <Music></Music>
-          <Music></Music>
-          <Music></Music>
-          <Music></Music>
-          <Music></Music>
-          <Music></Music>
-          <Music></Music>
-          <Music></Music>
-          <Music></Music>
-          <Music></Music>
-          <Music></Music>
-          <Music></Music> */}
-
-        </Flex>
+          <InfiniteScroll
+              pageStart={0}
+              loadMore={loadMoreAPI}
+              hasMore={hasMore}
+              loader={<div className="loader" key={0}>Loading ...</div>}
+          >
+          <Flex justifyContent="center" flexDirection="row" flexWrap="wrap">
+            {
+              musicItems.map(item => {
+                return <Music apiData={item} key={item.idx}></Music>;
+              })
+            }
+              {/* {items} // <-- This is the content you want to load */}
+          </Flex>
+          </InfiniteScroll>
+        {/* <CircularProgress isIndeterminate color='green.300' display={loading ? 'block' : 'none'} /> */}
       </Box>
     </Box>
   );
