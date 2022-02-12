@@ -58,7 +58,7 @@ export default function SimpleSidebar({ children }) {
 
   function loadAPI() {
     axios
-      .get(apiBaseURL + "/music")
+      .get(apiBaseURL + "/music?per_page=2000")
       .then((Response)=>{
         if (Response.data.code === 'SUCCESS') {
           // console.log(Response.data.data.data);
