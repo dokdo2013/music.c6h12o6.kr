@@ -8,12 +8,17 @@ import {
   Icon,
   chakra,
   Tooltip,
+  useToast
 } from '@chakra-ui/react';
 import { BsStar, BsStarFill, BsStarHalf } from 'react-icons/bs';
-import { FiShoppingCart } from 'react-icons/fi';
+import { FiShoppingCart, FiCopy } from 'react-icons/fi';
+import { RiFileCopy2Fill } from 'react-icons/ri';
+import {CopyToClipboard} from 'react-copy-to-clipboard';
 
 function ProductAddToCart({apiData}) {
-  console.log(apiData)
+  // console.log(apiData)
+  const toast = useToast();
+
   return (
       <Box
         bg={useColorModeValue('white', 'gray.800')}
@@ -21,7 +26,7 @@ function ProductAddToCart({apiData}) {
         minW="150"
         // maxW="160"
         borderWidth="1px"
-        rounded="sm"
+        // rounded="sm"
         shadow="sm"
         m="1"
         >
@@ -38,7 +43,7 @@ function ProductAddToCart({apiData}) {
         <Image
           src={apiData.album_cover}
           alt={`Picture of ${apiData.music_name}`}
-          roundedTop="lg"
+          // roundedTop="lg"
         />
 
         <Box p="1">
@@ -51,13 +56,21 @@ function ProductAddToCart({apiData}) {
           </Box> */}
           <Flex mt="1" justifyContent="space-between" alignContent="center">
             <Box
-              fontSize="12"
+              fontSize="14"
               fontWeight="semibold"
               as="h4"
               lineHeight="tight"
               isTruncated>
               {apiData.music_name}
             </Box>
+            <CopyToClipboard text={apiData.author_name + ' - ' + apiData.music_name}
+              onCopy={() => toast({
+                title: '클립보드에 복사했습니다!',
+                status: 'success',
+                isClosable: true,
+              })}>
+              <RiFileCopy2Fill style={{color: 'lightGrey'}} />
+            </CopyToClipboard>
             {/* <Tooltip
               label="Add to cart"
               bg="white"

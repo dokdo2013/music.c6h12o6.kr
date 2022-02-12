@@ -160,6 +160,9 @@ const SidebarContent = ({ onClose, ...rest }) => {
       {/* <Flex h="20" mx="8" mt="4">
         <Text fontSize={12} mb='8px'>카테고리</Text>
       </Flex> */}
+      <Flex h="20" mx="8" mt="4">
+        <Text fontSize={14} textAlign="center" fontFamily="IBM Plex Sans KR" mb='8px'>검색 기능 추가 예정입니다</Text>
+      </Flex>
 
 
 
