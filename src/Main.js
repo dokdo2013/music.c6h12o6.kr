@@ -110,8 +110,8 @@ export default function SimpleSidebar({ children }) {
     <Box minH="100vh" bg={useColorModeValue('gray.100', 'gray.900')}>
       <SidebarContent
         onClose={() => onClose}
-        display={{ base: 'none', md: 'block' }}
         data={{categoryItems, keyword, setKeyword, selectedCategory, setSelectedCategory, categoryStr, setCategoryStr}}
+        display={{ base: 'none', md: 'block' }}
       />
       <Drawer
         autoFocus={false}
@@ -120,9 +120,10 @@ export default function SimpleSidebar({ children }) {
         onClose={onClose}
         returnFocusOnClose={false}
         onOverlayClick={onClose}
+        data={{categoryItems, keyword, setKeyword, selectedCategory, setSelectedCategory, categoryStr, setCategoryStr}}
         size="full">
         <DrawerContent>
-          <SidebarContent onClose={onClose} />
+          <SidebarContent data={{categoryItems, keyword, setKeyword, selectedCategory, setSelectedCategory, categoryStr, setCategoryStr}} onClose={onClose} />
         </DrawerContent>
       </Drawer>
       {/* mobilenav */}
@@ -163,8 +164,7 @@ export default function SimpleSidebar({ children }) {
 //   onClose: () => void;
 // }
 
-const SidebarContent = ({ onClose, display, data }) => {
-
+const SidebarContent = ({ onClose, data, ...rest }) => {
   const isSelected = idx => {
     if (data.selectedCategory.indexOf(idx) !== -1) {
       return true;
@@ -205,7 +205,7 @@ const SidebarContent = ({ onClose, display, data }) => {
       w={{ base: 'full', md: 60 }}
       pos="fixed"
       h="full"
-      {...display}>
+      {...rest}>
       <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
         <Flex alignItems="center">
           <Image src='https://static-cdn.jtvnw.net/emoticons/v2/304434784/static/light/2.0' alt='C6H12O6' marginRight={2} width={30} />
@@ -217,7 +217,6 @@ const SidebarContent = ({ onClose, display, data }) => {
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
 
-
       <Flex mx="8">
         <InputGroup>
           <InputLeftElement
@@ -228,7 +227,7 @@ const SidebarContent = ({ onClose, display, data }) => {
         </InputGroup>
       </Flex>
 
-      <Flex h="20" mx="8" mt="4" flexDirection="column">
+      <Flex mx="8" mt="4" flexDirection="column">
         <Text fontSize={12} mb='8px' ml="0.5">카테고리 ({data.categoryItems.length})</Text>
         <Flex flexDirection="row" flexWrap="wrap">
           {
@@ -242,6 +241,10 @@ const SidebarContent = ({ onClose, display, data }) => {
           }
           <Button size="xs" m="0.5" colorScheme="blackAlpha" onClick={listReset} isDisabled={data.selectedCategory.length === 0}>초기화</Button>
         </Flex>
+      </Flex>
+
+      <Flex mx="8" mt="4" flexDirection="column">
+        <Button colorScheme="purple" display={{ base: 'flex', md: 'none' }} variant="outline" onClick={onClose}>적용</Button>
       </Flex>
       {/* <Flex h="20" mx="8" mt="4">
         <Text fontSize={14} textAlign="center" fontFamily="IBM Plex Sans KR" mb='8px'>검색 기능 추가 예정입니다</Text>
