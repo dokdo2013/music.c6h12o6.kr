@@ -39,8 +39,8 @@ import Music from './Components/Music';
 // import { calcRelativeAxisPosition } from 'framer-motion/types/projection/geometry/delta-calc';
 import axios from 'axios';
 
-// const apiBaseURL = "http://localhost:9090";
-const apiBaseURL = "https://api.c6h12o6.kr";
+const apiBaseURL = "http://localhost:9090";
+// const apiBaseURL = "https://api.c6h12o6.kr";
 
 export default function SimpleSidebar({ children }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -66,7 +66,6 @@ export default function SimpleSidebar({ children }) {
 
   function loadAPI() {
     setLoading(true);
-    console.log(categoryStr);
     axios
       .get(apiBaseURL + "/music?per_page=2000&order=" + order + "&order_type=" + orderType + "&search_keyword=" + keyword + "&search_category=" + categoryStr)
       .then((Response)=>{
@@ -175,16 +174,12 @@ const SidebarContent = ({ onClose, display, data }) => {
   }
 
   const listReset = () => {
-    console.log('me?');
     data.setSelectedCategory([]);
     data.setCategoryStr('');
   }
 
   const clickCategory = idx => {
-    console.log('clickCategory - idx : ' + idx);
-    console.log(data.selectedCategory.indexOf(idx));
     if (data.selectedCategory.indexOf(idx) !== -1) {
-      console.log(idx + ' 삭제!');
       // selectedCategory에 idx가 존재 -> selectedCategory에서 삭제, categoryStr에서 삭제
       let tempData = data.selectedCategory;
       let newArray = [];
@@ -194,16 +189,14 @@ const SidebarContent = ({ onClose, display, data }) => {
         }
       }
       data.setSelectedCategory(newArray);
-      data.setCategoryStr(newArray.join(';'));
+      data.setCategoryStr(newArray.join(','));
     } else {
-      console.log(idx + ' 추가!');
       // selectedCategory에 idx가 존재하지 않음 -> selectedCategory에 추가, categoryStr에 추가
       data.setSelectedCategory([...data.selectedCategory, idx]);
-      data.setCategoryStr([...data.selectedCategory, idx].join(';'));
+      data.setCategoryStr([...data.selectedCategory, idx].join(','));
     }
   }
-  console.log('현재 length: ' + data.selectedCategory.length);
-  console.log('현재 str : ' + data.categoryStr);
+
   return (
     <Box
       bg={useColorModeValue('white', 'gray.900')}
@@ -257,10 +250,6 @@ const SidebarContent = ({ onClose, display, data }) => {
   );
 };
 
-// interface NavItemProps extends FlexProps {
-//   icon: IconType;
-//   children: ReactText;
-// }
 const NavItem = ({ icon, children, ...rest }) => {
   return (
     <Link href="#" style={{ textDecoration: 'none' }} _focus={{ boxShadow: 'none' }}>

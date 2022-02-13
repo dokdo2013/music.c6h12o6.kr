@@ -16,7 +16,6 @@ import { RiFileCopy2Fill } from 'react-icons/ri';
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 
 function ProductAddToCart({apiData}) {
-  // console.log(apiData)
   const toast = useToast();
 
   return (
