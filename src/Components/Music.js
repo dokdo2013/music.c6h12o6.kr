@@ -87,7 +87,7 @@ function ProductAddToCart({apiData}) {
                 status: 'success',
                 isClosable: true,
               })}>
-              <RiFileCopy2Fill style={{color: 'lightGrey'}} size={20} />
+              <RiFileCopy2Fill style={{color: 'lightGrey', minWidth: '20px'}} size={20} />
             </CopyToClipboard>
             {/* <Tooltip
               label="Add to cart"
