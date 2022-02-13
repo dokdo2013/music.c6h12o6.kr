@@ -19,6 +19,7 @@ import {
   Button,
   Text,
   useDisclosure,
+  useColorMode,
   BoxProps,
   FlexProps,
   ButtonGroup,
@@ -33,6 +34,7 @@ import {
   FiSearch
 } from 'react-icons/fi';
 import { IconType } from 'react-icons';
+import { MoonIcon, SunIcon } from '@chakra-ui/icons';
 import { BiSortDown, BiSortUp } from 'react-icons/bi'; 
 import { ReactText } from 'react';
 import Music from './Components/Music';
@@ -43,6 +45,7 @@ import axios from 'axios';
 const apiBaseURL = "https://api.c6h12o6.kr";
 
 export default function SimpleSidebar({ children }) {
+  const { colorMode, toggleColorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [musicItems, setMusicItems] = useState([]);
   const [categoryItems, setCategoryItems] = useState([]);
@@ -110,7 +113,7 @@ export default function SimpleSidebar({ children }) {
     <Box minH="100vh" bg={useColorModeValue('gray.100', 'gray.900')}>
       <SidebarContent
         onClose={() => onClose}
-        data={{categoryItems, keyword, setKeyword, selectedCategory, setSelectedCategory, categoryStr, setCategoryStr}}
+        data={{colorMode, toggleColorMode, categoryItems, keyword, setKeyword, selectedCategory, setSelectedCategory, categoryStr, setCategoryStr}}
         display={{ base: 'none', md: 'block' }}
       />
       <Drawer
@@ -120,10 +123,10 @@ export default function SimpleSidebar({ children }) {
         onClose={onClose}
         returnFocusOnClose={false}
         onOverlayClick={onClose}
-        data={{categoryItems, keyword, setKeyword, selectedCategory, setSelectedCategory, categoryStr, setCategoryStr}}
+        // data={{categoryItems, keyword, setKeyword, selectedCategory, setSelectedCategory, categoryStr, setCategoryStr}}
         size="full">
         <DrawerContent>
-          <SidebarContent data={{categoryItems, keyword, setKeyword, selectedCategory, setSelectedCategory, categoryStr, setCategoryStr}} onClose={onClose} />
+          <SidebarContent data={{colorMode, toggleColorMode, categoryItems, keyword, setKeyword, selectedCategory, setSelectedCategory, categoryStr, setCategoryStr}} onClose={onClose} />
         </DrawerContent>
       </Drawer>
       {/* mobilenav */}
@@ -246,6 +249,12 @@ const SidebarContent = ({ onClose, data, ...rest }) => {
       <Flex mx="8" mt="4" flexDirection="column">
         <Button colorScheme="purple" display={{ base: 'flex', md: 'none' }} variant="outline" onClick={onClose}>적용</Button>
       </Flex>
+      <Flex justifyContent="center" mt="5">
+        <Button size="sm" onClick={data.toggleColorMode} variant="outline">
+          {data.colorMode === 'light' ? '다크' : '라이트'}모드 설정&nbsp;{data.colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
+        </Button>
+      </Flex>
+
       {/* <Flex h="20" mx="8" mt="4">
         <Text fontSize={14} textAlign="center" fontFamily="IBM Plex Sans KR" mb='8px'>검색 기능 추가 예정입니다</Text>
       </Flex> */}
