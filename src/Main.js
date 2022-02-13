@@ -39,8 +39,8 @@ import Music from './Components/Music';
 // import { calcRelativeAxisPosition } from 'framer-motion/types/projection/geometry/delta-calc';
 import axios from 'axios';
 
-const apiBaseURL = "http://localhost:9090";
-// const apiBaseURL = "https://api.c6h12o6.kr";
+// const apiBaseURL = "http://localhost:9090";
+const apiBaseURL = "https://api.c6h12o6.kr";
 
 export default function SimpleSidebar({ children }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
