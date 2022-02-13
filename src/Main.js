@@ -223,7 +223,7 @@ const SidebarContent = ({ onClose, data, ...rest }) => {
             pointerEvents='none'
             children={<FiSearch color='gray.300' />}
           />
-          <Input placeholder='Search' onChange={e => {data.setKeyword(e.target.value)}} />
+          <Input placeholder='Search' value={data.keyword} onChange={e => {data.setKeyword(e.target.value)}} />
         </InputGroup>
       </Flex>
 
@@ -234,7 +234,7 @@ const SidebarContent = ({ onClose, data, ...rest }) => {
             data.categoryItems.map(item => {
               return (
                 <Button key={item.idx} size="xs" m="0.5" colorScheme={(isSelected(item.idx)) ? 'purple' : 'gray'} onClick={() => {clickCategory(item.idx)}}>
-                  {item.name}
+                  {item.name} ({item.music_count})
                 </Button>
               )
             })
