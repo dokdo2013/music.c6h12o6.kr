@@ -8,12 +8,15 @@ import {
   Box,
   Badge,
   CloseButton,
+  CircularProgress,
   Flex,
   Icon,
   useColorModeValue,
   Link,
   Drawer,
   DrawerContent,
+  Stack,
+  Button,
   Text,
   useDisclosure,
   BoxProps,
@@ -30,45 +33,56 @@ import {
   FiSearch
 } from 'react-icons/fi';
 import { IconType } from 'react-icons';
+import { BiSortDown, BiSortUp } from 'react-icons/bi'; 
 import { ReactText } from 'react';
 import Music from './Components/Music';
 // import { calcRelativeAxisPosition } from 'framer-motion/types/projection/geometry/delta-calc';
 import axios from 'axios';
 
-// interface LinkItemProps {
-//   name: string;
-//   icon: IconType;
-// }
-// const LinkItems: Array<LinkItemProps> = [
-//   { name: 'Home', icon: FiHome },
-//   { name: 'Trending', icon: FiTrendingUp },
-//   { name: 'Explore', icon: FiCompass },
-//   { name: 'Favourites', icon: FiStar },
-//   { name: 'Settings', icon: FiSettings },
-// ];
+// const apiBaseURL = "http://localhost:9090";
 const apiBaseURL = "https://api.c6h12o6.kr";
 
 export default function SimpleSidebar({ children }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [musicItems, setMusicItems] = useState([{"idx": 1}]);
+  const [musicItems, setMusicItems] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [totalItem, setTotalItem] = useState(0);
+  const [order, setOrder] = useState('m.name');
+  const [orderType, setOrderType] = useState('asc');
 
   useEffect(() => {
     loadAPI();
-  }, [])
+  }, [order, orderType])
 
   function loadAPI() {
+    setLoading(true);
     axios
-      .get(apiBaseURL + "/music?per_page=2000")
+      .get(apiBaseURL + "/music?per_page=2000&order=" + order + "&order_type=" + orderType)
       .then((Response)=>{
         if (Response.data.code === 'SUCCESS') {
           // console.log(Response.data.data.data);
           setMusicItems(Response.data.data.data);
+          setTotalItem(Response.data.data.rows);
         }
+      })
+      .finally(() => {
+        setLoading(false);
       })
     // console.log(dt);
   }
 
   // useEffect
+  const changeOrder = fromOrder => {
+    if (fromOrder === order) {
+      if (orderType === 'asc') {
+        setOrderType('desc');
+      } else {
+        setOrderType('asc');
+      }
+    } else {
+      setOrder(fromOrder);
+    }
+  }
 
 
   return (
@@ -92,29 +106,31 @@ export default function SimpleSidebar({ children }) {
       {/* mobilenav */}
       <MobileNav display={{ base: 'flex', md: 'none' }} onOpen={onOpen} />
       <Box ml={{ base: 0, md: 60 }} p="4">
+        <Flex justifyContent="space-between" mb="4" alignItems="center">
+          <Text fontSize={14}>
+            총 {totalItem}곡
+          </Text>
+          <Stack direction='row' spacing={2} align='center'>
+            <Button colorScheme={(order === 'm.name') ? 'purple' : 'teal'} variant='ghost' size="sm" onClick={() => {changeOrder('m.name')}}>
+              곡명순&nbsp;{(order === 'm.name' && orderType === 'desc') ? <BiSortUp /> : <BiSortDown />}
+            </Button>
+            <Button colorScheme={(order === 'a.name') ? 'purple' : 'teal'} variant='ghost' size="sm" onClick={() => {changeOrder('a.name')}}>
+              가수명순&nbsp;{(order === 'a.name' && orderType === 'desc') ? <BiSortUp /> : <BiSortDown />}
+            </Button>
+            <Button colorScheme={(order === 'm.reg_datetime') ? 'purple' : 'teal'} variant='ghost' size="sm" onClick={() => {changeOrder('m.reg_datetime')}}>
+              등록순&nbsp;{(order === 'm.reg_datetime' && orderType === 'desc') ? <BiSortUp /> : <BiSortDown />}
+            </Button>
+          </Stack>
+        </Flex>
         <Flex justifyContent="center" flexDirection="row" flexWrap="wrap">
           {
             musicItems.map(item => {
               return <Music apiData={item} key={item.idx}></Music>;
             })
           }
-          {/* <Music coverURL="dd"></Music>
-          <Music></Music>
-          <Music></Music>
-          <Music></Music>
-          <Music></Music>
-          <Music></Music>
-          <Music></Music>
-          <Music></Music>
-          <Music></Music>
-          <Music></Music>
-          <Music></Music>
-          <Music></Music>
-          <Music></Music>
-          <Music></Music>
-          <Music></Music>
-          <Music></Music> */}
-
+        </Flex>
+        <Flex justifyContent="center" alignItems="center">
+          <CircularProgress isIndeterminate color='green.300' display={loading ? 'block' : 'none'} />
         </Flex>
       </Box>
     </Box>

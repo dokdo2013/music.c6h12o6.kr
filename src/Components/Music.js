@@ -11,7 +11,7 @@ import {
   useToast
 } from '@chakra-ui/react';
 import { BsStar, BsStarFill, BsStarHalf } from 'react-icons/bs';
-import { FiShoppingCart, FiCopy } from 'react-icons/fi';
+import { FiShoppingCart, FiCopy, FiInfo } from 'react-icons/fi';
 import { RiFileCopy2Fill } from 'react-icons/ri';
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 
@@ -40,11 +40,15 @@ function ProductAddToCart({apiData}) {
           />
         )} */}
 
-        <Image
-          src={apiData.album_cover}
-          alt={`Picture of ${apiData.music_name}`}
-          // roundedTop="lg"
-        />
+        <div>
+          <Image
+            src={apiData.album_cover}
+            alt={`Picture of ${apiData.music_name}`}
+            loading="lazy"
+            fit="contain"
+            // roundedTop="lg"
+          />
+        </div>
 
         <Box p="1">
           {/* <Box d="flex" alignItems="baseline">
@@ -61,7 +65,21 @@ function ProductAddToCart({apiData}) {
               as="h4"
               lineHeight="tight"
               isTruncated>
-              {apiData.music_name}
+                <Flex alignItems="center">
+                  <Badge colorScheme={apiData.category_color} size="10" fontSize="10" mr="1">{apiData.category_name}</Badge>
+                  {
+                    (apiData.music_comment === null || apiData.music_comment === '') ? '' : (
+                      <span>
+                        <Tooltip hasArrow label={apiData.music_comment} bg='gray.300' color='black' key={apiData.idx}>
+                          <span>
+                            <FiInfo size={10} style={{color: 'grey', marginRight: '2px'}} />
+                          </span>
+                        </Tooltip>
+                      </span>
+                    )
+                  }
+                </Flex>
+                  {apiData.music_name}
             </Box>
             <CopyToClipboard text={apiData.author_name + ' - ' + apiData.music_name}
               onCopy={() => toast({
@@ -69,7 +87,7 @@ function ProductAddToCart({apiData}) {
                 status: 'success',
                 isClosable: true,
               })}>
-              <RiFileCopy2Fill style={{color: 'lightGrey'}} />
+              <RiFileCopy2Fill style={{color: 'lightGrey'}} size={20} />
             </CopyToClipboard>
             {/* <Tooltip
               label="Add to cart"
