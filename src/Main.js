@@ -45,30 +45,52 @@ const apiBaseURL = "https://api.c6h12o6.kr";
 export default function SimpleSidebar({ children }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [musicItems, setMusicItems] = useState([]);
+  const [categoryItems, setCategoryItems] = useState([]);
+  const [authorItems, setAuthorItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [totalItem, setTotalItem] = useState(0);
   const [order, setOrder] = useState('m.name');
   const [orderType, setOrderType] = useState('asc');
+  const [keyword, setKeyword] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState([]);
+  const [categoryStr, setCategoryStr] = useState('');
+  const [searchedItemNum, setSearchedItemNum] = useState(0);
 
   useEffect(() => {
     loadAPI();
-  }, [order, orderType])
+  }, [order, orderType, keyword, categoryStr])
+
+  useEffect(() => {
+    loadCategory();
+  }, [])
 
   function loadAPI() {
     setLoading(true);
+    console.log(categoryStr);
     axios
-      .get(apiBaseURL + "/music?per_page=2000&order=" + order + "&order_type=" + orderType)
+      .get(apiBaseURL + "/music?per_page=2000&order=" + order + "&order_type=" + orderType + "&search_keyword=" + keyword + "&search_category=" + categoryStr)
       .then((Response)=>{
         if (Response.data.code === 'SUCCESS') {
           // console.log(Response.data.data.data);
           setMusicItems(Response.data.data.data);
           setTotalItem(Response.data.data.rows);
+          setSearchedItemNum(Response.data.data.data.length);
         }
       })
       .finally(() => {
         setLoading(false);
-      })
+      });
     // console.log(dt);
+  }
+
+  function loadCategory() {
+    axios
+      .get(apiBaseURL + "/category")
+      .then((Response) => {
+        if (Response.data.code === 'SUCCESS') {
+          setCategoryItems(Response.data.data.data);
+        }
+      });
   }
 
   // useEffect
@@ -90,6 +112,7 @@ export default function SimpleSidebar({ children }) {
       <SidebarContent
         onClose={() => onClose}
         display={{ base: 'none', md: 'block' }}
+        data={{categoryItems, keyword, setKeyword, selectedCategory, setSelectedCategory, categoryStr, setCategoryStr}}
       />
       <Drawer
         autoFocus={false}
@@ -108,9 +131,9 @@ export default function SimpleSidebar({ children }) {
       <Box ml={{ base: 0, md: 60 }} p="4">
         <Flex justifyContent="space-between" mb="4" alignItems="center">
           <Text fontSize={14}>
-            총 {totalItem}곡
+            총 {totalItem}곡 중 {searchedItemNum}곡
           </Text>
-          <Stack direction='row' spacing={2} align='center'>
+          <Stack direction='row' spacing={0} align='center'>
             <Button colorScheme={(order === 'm.name') ? 'purple' : 'teal'} variant='ghost' size="sm" onClick={() => {changeOrder('m.name')}}>
               곡명순&nbsp;{(order === 'm.name' && orderType === 'desc') ? <BiSortUp /> : <BiSortDown />}
             </Button>
@@ -141,7 +164,46 @@ export default function SimpleSidebar({ children }) {
 //   onClose: () => void;
 // }
 
-const SidebarContent = ({ onClose, ...rest }) => {
+const SidebarContent = ({ onClose, display, data }) => {
+
+  const isSelected = idx => {
+    if (data.selectedCategory.indexOf(idx) !== -1) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  const listReset = () => {
+    console.log('me?');
+    data.setSelectedCategory([]);
+    data.setCategoryStr('');
+  }
+
+  const clickCategory = idx => {
+    console.log('clickCategory - idx : ' + idx);
+    console.log(data.selectedCategory.indexOf(idx));
+    if (data.selectedCategory.indexOf(idx) !== -1) {
+      console.log(idx + ' 삭제!');
+      // selectedCategory에 idx가 존재 -> selectedCategory에서 삭제, categoryStr에서 삭제
+      let tempData = data.selectedCategory;
+      let newArray = [];
+      for (let i=0;i<tempData.length;i++) {
+        if (tempData[i] !== idx) {
+          newArray.push(tempData[i]);
+        }
+      }
+      data.setSelectedCategory(newArray);
+      data.setCategoryStr(newArray.join(';'));
+    } else {
+      console.log(idx + ' 추가!');
+      // selectedCategory에 idx가 존재하지 않음 -> selectedCategory에 추가, categoryStr에 추가
+      data.setSelectedCategory([...data.selectedCategory, idx]);
+      data.setCategoryStr([...data.selectedCategory, idx].join(';'));
+    }
+  }
+  console.log('현재 length: ' + data.selectedCategory.length);
+  console.log('현재 str : ' + data.categoryStr);
   return (
     <Box
       bg={useColorModeValue('white', 'gray.900')}
@@ -150,7 +212,7 @@ const SidebarContent = ({ onClose, ...rest }) => {
       w={{ base: 'full', md: 60 }}
       pos="fixed"
       h="full"
-      {...rest}>
+      {...display}>
       <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
         <Flex alignItems="center">
           <Image src='https://static-cdn.jtvnw.net/emoticons/v2/304434784/static/light/2.0' alt='C6H12O6' marginRight={2} width={30} />
@@ -169,25 +231,28 @@ const SidebarContent = ({ onClose, ...rest }) => {
             pointerEvents='none'
             children={<FiSearch color='gray.300' />}
           />
-          <Input placeholder='Search' />
+          <Input placeholder='Search' onChange={e => {data.setKeyword(e.target.value)}} />
         </InputGroup>
       </Flex>
 
-      {/* <Flex h="20" mx="8" mt="4">
-        <Text fontSize={12} mb='8px'>카테고리</Text>
-      </Flex> */}
-      <Flex h="20" mx="8" mt="4">
-        <Text fontSize={14} textAlign="center" fontFamily="IBM Plex Sans KR" mb='8px'>검색 기능 추가 예정입니다</Text>
+      <Flex h="20" mx="8" mt="4" flexDirection="column">
+        <Text fontSize={12} mb='8px' ml="0.5">카테고리 ({data.categoryItems.length})</Text>
+        <Flex flexDirection="row" flexWrap="wrap">
+          {
+            data.categoryItems.map(item => {
+              return (
+                <Button key={item.idx} size="xs" m="0.5" colorScheme={(isSelected(item.idx)) ? 'purple' : 'gray'} onClick={() => {clickCategory(item.idx)}}>
+                  {item.name}
+                </Button>
+              )
+            })
+          }
+          <Button size="xs" m="0.5" colorScheme="blackAlpha" onClick={listReset} isDisabled={data.selectedCategory.length === 0}>초기화</Button>
+        </Flex>
       </Flex>
-
-
-
-
-      {/* {LinkItems.map((link) => (
-        <NavItem key={link.name} icon={link.icon}>
-          {link.name}
-        </NavItem>
-      ))} */}
+      {/* <Flex h="20" mx="8" mt="4">
+        <Text fontSize={14} textAlign="center" fontFamily="IBM Plex Sans KR" mb='8px'>검색 기능 추가 예정입니다</Text>
+      </Flex> */}
     </Box>
   );
 };
@@ -227,9 +292,6 @@ const NavItem = ({ icon, children, ...rest }) => {
   );
 };
 
-// interface MobileProps extends FlexProps {
-//   onOpen: () => void;
-// }
 const MobileNav = ({ onOpen, ...rest }) => {
   return (
     <Flex
@@ -250,10 +312,6 @@ const MobileNav = ({ onOpen, ...rest }) => {
         </Text>
         <Badge colorScheme='purple' ml={1}>Beta</Badge>
       </Flex>
-
-      {/* <Text fontSize="2xl" ml="8" fontFamily="PT Sans" fontWeight="bold">
-        Music
-      </Text> */}
 
       <IconButton
         variant="outline"

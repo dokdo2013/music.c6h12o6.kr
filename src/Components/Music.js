@@ -22,8 +22,9 @@ function ProductAddToCart({apiData}) {
   return (
       <Box
         bg={useColorModeValue('white', 'gray.800')}
-        w="12%"
+        w="10%"
         minW="150"
+        maxW="200"
         // maxW="160"
         borderWidth="1px"
         // rounded="sm"
