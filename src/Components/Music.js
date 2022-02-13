@@ -79,7 +79,13 @@ function ProductAddToCart({apiData}) {
                     )
                   }
                 </Flex>
+                <span style={{cursor: 'pointer'}} onClick={() => toast({
+                  title: apiData.music_name,
+                  status: 'info',
+                  isClosable: true,
+                })}>
                   {apiData.music_name}
+                </span>
             </Box>
             <CopyToClipboard text={apiData.author_name + ' - ' + apiData.music_name}
               onCopy={() => toast({
@@ -87,7 +93,7 @@ function ProductAddToCart({apiData}) {
                 status: 'success',
                 isClosable: true,
               })}>
-              <RiFileCopy2Fill style={{color: 'lightGrey', minWidth: '20px'}} size={20} />
+              <RiFileCopy2Fill style={{color: 'lightGrey', minWidth: '20px', cursor: 'pointer'}} size={20} />
             </CopyToClipboard>
             {/* <Tooltip
               label="Add to cart"

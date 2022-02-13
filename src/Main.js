@@ -49,7 +49,7 @@ export default function SimpleSidebar({ children }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [musicItems, setMusicItems] = useState([]);
   const [categoryItems, setCategoryItems] = useState([]);
-  const [authorItems, setAuthorItems] = useState([]);
+  // const [authorItems, setAuthorItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [totalItem, setTotalItem] = useState(0);
   const [order, setOrder] = useState('m.name');
@@ -65,6 +65,7 @@ export default function SimpleSidebar({ children }) {
 
   useEffect(() => {
     loadCategory();
+    loadLocalStorage();
   }, [])
 
   function loadAPI() {
@@ -95,16 +96,28 @@ export default function SimpleSidebar({ children }) {
       });
   }
 
+  function loadLocalStorage() {
+    if (localStorage.getItem('order') !== null && localStorage.getItem('order') !== '') {
+      setOrder(localStorage.getItem('order'));
+    }
+    if (localStorage.getItem('order_type') !== null && localStorage.getItem('order_type') !== '') {
+      setOrderType(localStorage.getItem('order_type'));
+    }
+  }
+
   // useEffect
   const changeOrder = fromOrder => {
     if (fromOrder === order) {
       if (orderType === 'asc') {
         setOrderType('desc');
+        localStorage.setItem('order_type', 'desc');
       } else {
         setOrderType('asc');
+        localStorage.setItem('order_type', 'asc');
       }
     } else {
       setOrder(fromOrder);
+      localStorage.setItem('order', fromOrder);
     }
   }
 
@@ -179,6 +192,7 @@ const SidebarContent = ({ onClose, data, ...rest }) => {
   const listReset = () => {
     data.setSelectedCategory([]);
     data.setCategoryStr('');
+    data.setKeyword('');
   }
 
   const clickCategory = idx => {
@@ -242,7 +256,7 @@ const SidebarContent = ({ onClose, data, ...rest }) => {
               )
             })
           }
-          <Button size="xs" m="0.5" colorScheme="blackAlpha" onClick={listReset} isDisabled={data.selectedCategory.length === 0}>초기화</Button>
+          <Button size="xs" m="0.5" colorScheme="teal" onClick={listReset} isDisabled={data.selectedCategory.length === 0}>초기화</Button>
         </Flex>
       </Flex>
 
