@@ -9,6 +9,7 @@
   <img src="https://img.shields.io/badge/fastapi-009688?style=for-the-badge&logo=fastapi&logoColor=white"> 
   <img src="https://img.shields.io/badge/mariaDB-003545?style=for-the-badge&logo=mariaDB&logoColor=white"> 
   <img src="https://img.shields.io/badge/amazonaws-232F3E?style=for-the-badge&logo=amazonaws&logoColor=white"> 
+  <img src="https://img.shields.io/badge/jenkins-D24939?style=for-the-badge&logo=jenkins&logoColor=white"> 
   <br>  
   <img src="https://img.shields.io/badge/php-777BB4?style=for-the-badge&logo=php&logoColor=white"> 
   <img src="https://img.shields.io/badge/codeigniter-EF4223?style=for-the-badge&logo=codeigniter&logoColor=white"> 
@@ -17,3 +18,12 @@
   <br>
 </div>
 
+## 주요 특징
+1) 간편한 검색 기능 : 카테고리와 검색어로 원하는 곡을 찾을 수 있음
+2) 앨범아트 : 직관적으로 곡 찾기 가능
+3) 복사 기능 : '가수 - 곡명' 형식으로 텍스트 복사 가능! 포래방 포인트 입력창에 바로 붙여넣을 수 있음
+
+## 주요 링크
+- 트위치 포도당 : [twitch.tv/kimc6h12o6](https://twitch.tv/kimc6h12o6)
+- 포도당 노래책 : [music.c6h12o6.kr](https://music.c6h12o6.kr)
+- 포도당 OpenAPI : [api.c6h12o6.kr/docs](https://api.c6h12o6.kr/docs)
