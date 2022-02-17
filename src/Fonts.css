@@ -3,13 +3,3 @@
 body {
   font-family: 'IBM Plex Sans KR', sans-serif !important;
 }
-
-:root {
-  --vh: 100%;
-}
-
-html,
-body {
-   height: 100vh;
-   height: var(--vh);
-}
