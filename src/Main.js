@@ -260,7 +260,7 @@ const SidebarContent = ({ onClose, data, ...rest }) => {
       </Flex>
 
 
-      <Flex flexDirection="column" justifyContent="space-between" style={{height: 'calc(100% - 120px)'}}>
+      <Flex flexDirection="column" justifyContent="space-between" style={{height: 'calc(var(--vh) - 120px)'}}>
         {/* 검색 옵션 영역 */}
         <Flex overflow="scroll" flexDirection="column">
           <Flex mx="8" mt="4" flexDirection="column">
