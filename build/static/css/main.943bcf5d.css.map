@@ -1,1 +1,0 @@
-{"version":3,"file":"static/css/main.943bcf5d.css","mappings":"6IAEA,KACE,iDACF","sources":["Fonts.css"],"sourcesContent":["@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@100;200;300;400;500;600;700&family=PT+Sans:wght@700&display=swap');\n\nbody {\n  font-family: 'IBM Plex Sans KR', sans-serif !important;\n}"],"names":[],"sourceRoot":""}
