@@ -138,7 +138,7 @@ export default function SimpleSidebar({ children }) {
   const { isOpen: modalIsOpen, onOpen: modalOnOpen, onClose: modalOnClose } = useDisclosure();
 
   return (
-    <Box minH="100vh" bg={useColorModeValue('gray.100', 'gray.900')}>
+    <Box id="main" minH="100%" bg={useColorModeValue('gray.100', 'gray.900')}>
       <SettingModal isOpen={modalIsOpen} onOpen={modalOnOpen} onClose={modalOnClose} data={{useCopy, setUseCopy, copyType, setCopyType, mnameClickEvent, setMnameClickEvent}}/>
       <SidebarContent
         onClose={() => onClose}
