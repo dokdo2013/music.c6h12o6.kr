@@ -1,4 +1,5 @@
 import {
+  AspectRatio,
   Flex,
   Circle,
   Box,
@@ -15,8 +16,18 @@ import { FiShoppingCart, FiCopy, FiInfo } from 'react-icons/fi';
 import { RiFileCopy2Fill } from 'react-icons/ri';
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 
-function ProductAddToCart({apiData}) {
+function ProductAddToCart({apiData, data}) {
   const toast = useToast();
+  let copyData = apiData.author_name + ' - ' + apiData.music_name;
+  if (parseInt(data.copyType) === 1) {
+    copyData = apiData.author_name + ' - ' + apiData.music_name;
+  } else if (parseInt(data.copyType) === 2) {
+    copyData = apiData.music_name + ' - ' + apiData.author_name;
+  } else if (parseInt(data.copyType) === 3) {
+    copyData = apiData.music_name + ' (' + apiData.author_name + ')';
+  } else if (parseInt(data.copyType) === 4) {
+    copyData = apiData.music_name;
+  }
 
   return (
       <Box
@@ -41,13 +52,15 @@ function ProductAddToCart({apiData}) {
         )} */}
 
         <div>
-          <Image
-            src={apiData.album_cover}
-            alt={`Picture of ${apiData.music_name}`}
-            loading="lazy"
-            fit="contain"
-            // roundedTop="lg"
-          />
+          <AspectRatio ratio={1 / 1}>
+            <Image
+              src={apiData.album_cover}
+              alt={`Picture of ${apiData.music_name}`}
+              loading="lazy"
+              fit="contain"
+              // roundedTop="lg"
+            />
+          </AspectRatio>
         </div>
 
         <Box p="1">
@@ -79,32 +92,40 @@ function ProductAddToCart({apiData}) {
                     )
                   }
                 </Flex>
-                <span style={{cursor: 'pointer'}} onClick={() => toast({
-                  title: apiData.music_name,
-                  status: 'info',
-                  isClosable: true,
-                })}>
-                  {apiData.music_name}
-                </span>
+                {
+                  (parseInt(data.mnameClickEvent) === 1)
+                    ? (
+                        <span style={{cursor: 'pointer'}} onClick={ () => {
+                          toast({
+                            title: apiData.music_name,
+                            status: 'info',
+                            isClosable: true,
+                          })  
+                        } }>{apiData.music_name}</span>
+                      )
+                    : (
+                        <CopyToClipboard text={apiData.music_name}
+                        onCopy={() => toast({
+                          title: '클립보드에 복사했습니다!',
+                          status: 'success',
+                          isClosable: true,
+                        })}>
+                        <span style={{cursor: 'pointer'}}>{apiData.music_name}</span></CopyToClipboard>
+                      )
+                }
             </Box>
-            <CopyToClipboard text={apiData.author_name + ' - ' + apiData.music_name}
-              onCopy={() => toast({
-                title: '클립보드에 복사했습니다!',
-                status: 'success',
-                isClosable: true,
-              })}>
-              <RiFileCopy2Fill style={{color: 'lightGrey', minWidth: '20px', cursor: 'pointer'}} size={20} />
-            </CopyToClipboard>
-            {/* <Tooltip
-              label="Add to cart"
-              bg="white"
-              placement={'top'}
-              color={'gray.800'}
-              fontSize={'1.2em'}>
-              <chakra.a href={'#'} display={'flex'}>
-                <Icon as={FiShoppingCart} h={7} w={7} alignSelf={'center'} />
-              </chakra.a>
-            </Tooltip> */}
+            {
+              (parseInt(data.useCopy) === 1) && (
+                  <CopyToClipboard text={copyData}
+                  onCopy={() => toast({
+                    title: '클립보드에 복사했습니다!',
+                    status: 'success',
+                    isClosable: true,
+                  })}>
+                  <RiFileCopy2Fill style={{color: 'lightGrey', minWidth: '20px', cursor: 'pointer'}} size={20} />
+                </CopyToClipboard>    
+                )
+            }
           </Flex>
 
           <Flex justifyContent="space-between" alignContent="center">

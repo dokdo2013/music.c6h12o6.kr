@@ -9,6 +9,7 @@ import {
   Badge,
   CloseButton,
   CircularProgress,
+  Divider,
   Flex,
   Icon,
   useColorModeValue,
@@ -36,8 +37,10 @@ import {
 import { IconType } from 'react-icons';
 import { MoonIcon, SunIcon } from '@chakra-ui/icons';
 import { BiSortDown, BiSortUp } from 'react-icons/bi'; 
+import { BsTwitch } from 'react-icons/bs'; 
 import { ReactText } from 'react';
 import Music from './Components/Music';
+import SettingModal from './Components/SettingModal';
 // import { calcRelativeAxisPosition } from 'framer-motion/types/projection/geometry/delta-calc';
 import axios from 'axios';
 
@@ -58,6 +61,9 @@ export default function SimpleSidebar({ children }) {
   const [selectedCategory, setSelectedCategory] = useState([]);
   const [categoryStr, setCategoryStr] = useState('');
   const [searchedItemNum, setSearchedItemNum] = useState(0);
+  const [useCopy, setUseCopy] = useState(1);
+  const [copyType, setCopyType] = useState(1);
+  const [mnameClickEvent, setMnameClickEvent] = useState(1);
 
   useEffect(() => {
     loadAPI();
@@ -103,8 +109,16 @@ export default function SimpleSidebar({ children }) {
     if (localStorage.getItem('order_type') !== null && localStorage.getItem('order_type') !== '') {
       setOrderType(localStorage.getItem('order_type'));
     }
+    if (localStorage.getItem('setting_use_copy') !== null && localStorage.getItem('setting_use_copy') !== '') {
+      setUseCopy(localStorage.getItem('setting_use_copy'));
+    }
+    if (localStorage.getItem('setting_copy_type') !== null && localStorage.getItem('setting_copy_type') !== '') {
+      setCopyType(localStorage.getItem('setting_copy_type'));
+    }
+    if (localStorage.getItem('setting_mname_click_event') !== null && localStorage.getItem('setting_mname_click_event') !== '') {
+      setMnameClickEvent(localStorage.getItem('setting_mname_click_event'));
+    }
   }
-
   // useEffect
   const changeOrder = fromOrder => {
     if (fromOrder === order) {
@@ -121,12 +135,14 @@ export default function SimpleSidebar({ children }) {
     }
   }
 
+  const { isOpen: modalIsOpen, onOpen: modalOnOpen, onClose: modalOnClose } = useDisclosure();
 
   return (
     <Box minH="100vh" bg={useColorModeValue('gray.100', 'gray.900')}>
+      <SettingModal isOpen={modalIsOpen} onOpen={modalOnOpen} onClose={modalOnClose} data={{useCopy, setUseCopy, copyType, setCopyType, mnameClickEvent, setMnameClickEvent}}/>
       <SidebarContent
         onClose={() => onClose}
-        data={{colorMode, toggleColorMode, categoryItems, keyword, setKeyword, selectedCategory, setSelectedCategory, categoryStr, setCategoryStr}}
+        data={{modalOnOpen, colorMode, toggleColorMode, categoryItems, keyword, setKeyword, selectedCategory, setSelectedCategory, categoryStr, setCategoryStr}}
         display={{ base: 'none', md: 'block' }}
       />
       <Drawer
@@ -136,10 +152,9 @@ export default function SimpleSidebar({ children }) {
         onClose={onClose}
         returnFocusOnClose={false}
         onOverlayClick={onClose}
-        // data={{categoryItems, keyword, setKeyword, selectedCategory, setSelectedCategory, categoryStr, setCategoryStr}}
         size="full">
         <DrawerContent>
-          <SidebarContent data={{colorMode, toggleColorMode, categoryItems, keyword, setKeyword, selectedCategory, setSelectedCategory, categoryStr, setCategoryStr}} onClose={onClose} />
+          <SidebarContent data={{modalOnOpen, colorMode, toggleColorMode, categoryItems, keyword, setKeyword, selectedCategory, setSelectedCategory, categoryStr, setCategoryStr}} onClose={onClose} />
         </DrawerContent>
       </Drawer>
       {/* mobilenav */}
@@ -164,7 +179,7 @@ export default function SimpleSidebar({ children }) {
         <Flex justifyContent="center" flexDirection="row" flexWrap="wrap">
           {
             musicItems.map(item => {
-              return <Music apiData={item} key={item.idx}></Music>;
+              return <Music apiData={item} key={item.idx} data={{useCopy, copyType, mnameClickEvent}}></Music>;
             })
           }
         </Flex>
@@ -244,30 +259,74 @@ const SidebarContent = ({ onClose, data, ...rest }) => {
         </InputGroup>
       </Flex>
 
-      <Flex mx="8" mt="4" flexDirection="column">
-        <Text fontSize={12} mb='8px' ml="0.5">카테고리 ({data.categoryItems.length})</Text>
-        <Flex flexDirection="row" flexWrap="wrap">
-          {
-            data.categoryItems.map(item => {
-              return (
-                <Button key={item.idx} size="xs" m="0.5" colorScheme={(isSelected(item.idx)) ? 'purple' : 'gray'} onClick={() => {clickCategory(item.idx)}}>
-                  {item.name} ({item.music_count})
-                </Button>
-              )
-            })
-          }
-          <Button size="xs" m="0.5" colorScheme="teal" onClick={listReset} isDisabled={data.selectedCategory.length === 0}>초기화</Button>
+
+      <Flex flexDirection="column" justifyContent="space-between" style={{height: 'calc(100vh - 120px)'}}>
+        {/* 검색 옵션 영역 */}
+        <Flex overflow="scroll" flexDirection="column">
+          <Flex mx="8" mt="4" flexDirection="column">
+            <Text fontSize={12} mb='8px' ml="0.5">카테고리 ({data.categoryItems.length})</Text>
+            <Flex flexDirection="row" flexWrap="wrap">
+              {
+                data.categoryItems.map(item => {
+                  return (
+                    <Button key={item.idx} size="xs" m="0.5" colorScheme={(isSelected(item.idx)) ? 'purple' : 'gray'} onClick={() => {clickCategory(item.idx)}}>
+                      {item.name} ({item.music_count})
+                    </Button>
+                  )
+                })
+              }
+              <Button size="xs" m="0.5" colorScheme="teal" onClick={listReset} isDisabled={data.selectedCategory.length === 0 && data.keyword.length === 0}>초기화</Button>
+            </Flex>
+          </Flex>
+        </Flex>
+        {/* 설정 영역 */}
+        <Flex flexDirection="column">
+          <Flex mx="8" mt="4" mb="4" flexDirection="column">
+            <Button colorScheme="purple" display={{ base: 'flex', md: 'none' }} variant="outline" onClick={onClose}>적용</Button>
+          </Flex>
+          
+          <Flex mx="8" flexDirection="column">
+            <Divider />
+          </Flex>
+          
+          <Flex justifyContent="center" mt="4" mb="4">
+            <IconButton
+              variant='outline'
+              size="sm"
+              aria-label='Twitch'
+              onClick={() => {window.open('https://twitch.tv/kimc6h12o6')}}
+              icon={<BsTwitch />}
+              mr="1"
+            />
+
+            <IconButton
+              variant='outline'
+              size="sm"
+              aria-label='Color Mode'
+              onClick={data.toggleColorMode}
+              icon={data.colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
+              mr="1"
+            />
+
+            <IconButton
+              variant='outline'
+              size="sm"
+              aria-label='Color Mode'
+              onClick={data.modalOnOpen}
+              icon={<FiSettings />}
+            />
+
+            {/* <Button size="sm" onClick={data.toggleColorMode} variant="outline">
+              {data.colorMode === 'light' ? '다크' : '라이트'}모드 설정&nbsp;{data.colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
+            </Button> */}
+          </Flex>
         </Flex>
       </Flex>
 
-      <Flex mx="8" mt="4" flexDirection="column">
-        <Button colorScheme="purple" display={{ base: 'flex', md: 'none' }} variant="outline" onClick={onClose}>적용</Button>
-      </Flex>
-      <Flex justifyContent="center" mt="5">
-        <Button size="sm" onClick={data.toggleColorMode} variant="outline">
-          {data.colorMode === 'light' ? '다크' : '라이트'}모드 설정&nbsp;{data.colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
-        </Button>
-      </Flex>
+
+
+
+
 
       {/* <Flex h="20" mx="8" mt="4">
         <Text fontSize={14} textAlign="center" fontFamily="IBM Plex Sans KR" mb='8px'>검색 기능 추가 예정입니다</Text>
