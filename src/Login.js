@@ -18,8 +18,8 @@ import {
 import axios from 'axios';
 import { useState, useRef, useEffect } from 'react';
 
-const apiBaseURL = "http://localhost:9090";
-// const apiBaseURL = "https://api.c6h12o6.kr";
+// const apiBaseURL = "http://localhost:9090";
+const apiBaseURL = "https://api.c6h12o6.kr";
 
 export default function SimpleCard() {
   const toast = useToast();
