@@ -152,7 +152,7 @@ export default function SimpleSidebar({ children }) {
 
   const firstAuth = () => {
     // 토큰 존재 여부 체크
-    if (localStorage.getItem('X-Access-Token') === '' || localStorage.getItem('X-Access-Token') === undefined) {
+    if (localStorage.getItem('X-Access-Token') === '' || localStorage.getItem('X-Access-Token') === undefined || localStorage.getItem('X-Access-Token') === null) {
       localStorage.setItem('X-Access-Token', '');
       return false;
     }
