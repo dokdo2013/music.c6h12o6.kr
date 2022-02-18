@@ -36,8 +36,9 @@ import {
 } from 'react-icons/fi';
 import { IconType } from 'react-icons';
 import { MoonIcon, SunIcon } from '@chakra-ui/icons';
-import { BiSortDown, BiSortUp } from 'react-icons/bi'; 
+import { BiSortDown, BiSortUp, BiRefresh } from 'react-icons/bi'; 
 import { BsTwitch } from 'react-icons/bs'; 
+import { GrSoundcloud } from 'react-icons/gr'; 
 import { ReactText } from 'react';
 import Music from './Components/Music';
 import SettingModal from './Components/SettingModal';
@@ -161,8 +162,8 @@ export default function SimpleSidebar({ children }) {
       <MobileNav display={{ base: 'flex', md: 'none' }} onOpen={onOpen} />
       <Box ml={{ base: 0, md: 60 }} p="4">
         <Flex justifyContent="space-between" mb="4" alignItems="center">
-          <Text fontSize={14}>
-            총 {totalItem}곡 중 {searchedItemNum}곡
+          <Text fontSize={14} display="flex" alignItems="center">
+            총 {totalItem}곡 중 {searchedItemNum}곡 <BiRefresh style={{marginLeft: '2px', cursor: 'pointer'}} onClick={loadAPI} />
           </Text>
           <Stack direction='row' spacing={0} align='center'>
             <Button colorScheme={(order === 'm.name') ? 'purple' : 'teal'} variant='ghost' size="sm" onClick={() => {changeOrder('m.name')}}>
@@ -296,6 +297,15 @@ const SidebarContent = ({ onClose, data, ...rest }) => {
               aria-label='Twitch'
               onClick={() => {window.open('https://twitch.tv/kimc6h12o6')}}
               icon={<BsTwitch />}
+              mr="1"
+            />
+
+            <IconButton
+              variant='outline'
+              size="sm"
+              aria-label='Soundcloud'
+              onClick={() => {window.open('https://soundcloud.com/aqttrx5eh3ey')}}
+              icon={<GrSoundcloud />}
               mr="1"
             />
 

@@ -58,7 +58,7 @@ function SettingModal({isOpen, onOpen, onClose, data}) {
 
   return (
     <>
-      <Modal onClose={onClose} isOpen={isOpen} isCentered={false} scrollBehavior='inside' size="xl">
+      <Modal onClose={onClose} isOpen={isOpen} isCentered={false} colorScheme="puprle" scrollBehavior='inside' size="xl">
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>설정 및 정보</ModalHeader>
@@ -66,9 +66,9 @@ function SettingModal({isOpen, onOpen, onClose, data}) {
           <ModalBody>
             <Tabs size='sm' variant='enclosed'>
               <TabList>
-                <Tab>기본 설정</Tab>
+                <Tab>설정</Tab>
                 <Tab>실험실 (Beta)</Tab>
-                <Tab>개인정보처리방침</Tab>
+                <Tab>쿠키 정책</Tab>
                 <Tab>관리자 로그인</Tab>
                 <Tab>정보</Tab>
               </TabList>
