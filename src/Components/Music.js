@@ -5,13 +5,14 @@ import {
   Box,
   Image,
   Badge,
+  Button,
   useColorModeValue,
   Icon,
   chakra,
   Tooltip,
   useToast
 } from '@chakra-ui/react';
-import { BsStar, BsStarFill, BsStarHalf } from 'react-icons/bs';
+import { FaTrashAlt } from 'react-icons/fa';
 import { FiShoppingCart, FiCopy, FiInfo } from 'react-icons/fi';
 import { RiFileCopy2Fill } from 'react-icons/ri';
 import {CopyToClipboard} from 'react-copy-to-clipboard';
@@ -85,7 +86,7 @@ function ProductAddToCart({apiData, data}) {
                       <span>
                         <Tooltip hasArrow label={apiData.music_comment} bg='gray.300' color='black' key={apiData.idx}>
                           <span>
-                            <FiInfo size={10} style={{color: 'grey', marginRight: '2px'}} />
+                            <FiInfo size={10} style={{color: 'grey', marginRight: '2px', cursor: 'pointer'}} />
                           </span>
                         </Tooltip>
                       </span>
@@ -128,11 +129,20 @@ function ProductAddToCart({apiData, data}) {
             }
           </Flex>
 
-          <Flex justifyContent="space-between" alignContent="center">
-            <Box fontSize="12" color={useColorModeValue('gray.800', 'white')}>
+          <Flex justifyContent="space-between" alignContent="center" >
+            <Box fontSize="12" color={useColorModeValue('gray.800', 'white')} isTruncated>
                 {apiData.author_name}
             </Box>
           </Flex>
+
+          {
+            data.isLogin && (
+              <Flex justifyContent="space-between" alignContent="center" mt="2">
+                <Button size="xs" colorScheme="gray" mr="0.5" isFullWidth>수정</Button>
+                <Button size="xs" colorScheme="red" ml="0.5"><FaTrashAlt /></Button>
+              </Flex>  
+            )
+          }
         </Box>
       </Box>
   );

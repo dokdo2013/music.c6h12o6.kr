@@ -4,6 +4,8 @@ import {
   AlertTitle,
   AlertDescription,
   Button,
+  Checkbox,
+  Stack,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -69,7 +71,6 @@ function SettingModal({isOpen, onOpen, onClose, data}) {
                 <Tab>설정</Tab>
                 <Tab>실험실 (Beta)</Tab>
                 <Tab>쿠키 정책</Tab>
-                <Tab>관리자 로그인</Tab>
                 <Tab>정보</Tab>
               </TabList>
               <TabPanels>
@@ -139,42 +140,6 @@ function SettingModal({isOpen, onOpen, onClose, data}) {
                     구글 애널리틱스는 쿠키(Cookie)를 통하여 본 웹사이트 이용자의 행태정보를 수집하게 되며, 이 경우 이용자 개인을 식별할 수 없는 비식별정보 만이 수집됩니다. 그럼에도 이용자는 Google 애널리틱스 차단 브라우저 부가기능의 설치(https://tools.google.com/dlpage/gaoptout) 또는 웹브라우저의 쿠키 설정 거부를 통해 구글 애널리틱스 이용을 거부할 수 있습니다.
                     <br /><br />
                     그리고, 이와 같이 수집된 비식별 행태정보는 구글(Google)의 구글 애드워즈 서비스를 통하여 온라인 광고 목적으로 사용될 수 있습니다.</Text>
-                </TabPanel>
-                <TabPanel>
-                  <form id="login_form">
-                    <FormControl mb="2">
-                      <FormLabel htmlFor='user_id'>아이디</FormLabel>
-                      <Input id='user_id' type='text' placeholder="아이디를 입력해주세요" required />
-                    </FormControl>
-                    <FormControl>
-                      <FormLabel htmlFor='user_pw'>비밀번호</FormLabel>
-                      <InputGroup size='md'>
-                        <Input
-                          pr='4.5rem'
-                          id="user_pw"
-                          type={show ? 'text' : 'password'}
-                          placeholder='비밀번호를 입력해주세요'
-                          required
-                        />
-                        <InputRightElement width='4.5rem'>
-                          <Button h='1.75rem' size='sm' onClick={handleClick}>
-                            {show ? '가리기' : '보이기'}
-                          </Button>
-                        </InputRightElement>
-                      </InputGroup>
-                    </FormControl>
-
-                    <Flex justifyContent="center">
-                      <Button
-                        mt={4}
-                        colorScheme='purple'
-                        variant='outline'
-                        isFullWidth={true}
-                        // isLoading={props.isSubmitting}
-                        type='submit'
-                      >로그인</Button>
-                    </Flex>
-                  </form>
                 </TabPanel>
                 <TabPanel>
                   <Text fontSize="lg" fontWeight="semibold">Developed By</Text>

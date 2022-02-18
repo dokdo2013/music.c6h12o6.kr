@@ -1,5 +1,6 @@
 import React, { ReactNode, useState, useEffect } from 'react';
 import {
+  Avatar, AvatarBadge, AvatarGroup,
   IconButton,
   Image,
   Input,
@@ -10,6 +11,11 @@ import {
   CloseButton,
   CircularProgress,
   Divider,
+  List,
+  ListItem,
+  ListIcon,
+  OrderedList,
+  UnorderedList,
   Flex,
   Icon,
   useColorModeValue,
@@ -24,6 +30,7 @@ import {
   BoxProps,
   FlexProps,
   ButtonGroup,
+  useToast
 } from '@chakra-ui/react';
 import {
   FiHome,
@@ -32,7 +39,9 @@ import {
   FiStar,
   FiSettings,
   FiMenu,
-  FiSearch
+  FiUser,
+  FiSearch,
+  FiLogOut
 } from 'react-icons/fi';
 import { IconType } from 'react-icons';
 import { MoonIcon, SunIcon } from '@chakra-ui/icons';
@@ -45,15 +54,14 @@ import SettingModal from './Components/SettingModal';
 // import { calcRelativeAxisPosition } from 'framer-motion/types/projection/geometry/delta-calc';
 import axios from 'axios';
 
-// const apiBaseURL = "http://localhost:9090";
-const apiBaseURL = "https://api.c6h12o6.kr";
+const apiBaseURL = "http://localhost:9090";
+// const apiBaseURL = "https://api.c6h12o6.kr";
 
 export default function SimpleSidebar({ children }) {
   const { colorMode, toggleColorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [musicItems, setMusicItems] = useState([]);
   const [categoryItems, setCategoryItems] = useState([]);
-  // const [authorItems, setAuthorItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [totalItem, setTotalItem] = useState(0);
   const [order, setOrder] = useState('m.name');
@@ -65,6 +73,11 @@ export default function SimpleSidebar({ children }) {
   const [useCopy, setUseCopy] = useState(1);
   const [copyType, setCopyType] = useState(1);
   const [mnameClickEvent, setMnameClickEvent] = useState(1);
+  const [user, setUser] = useState({});
+  const [isLogin, setIsLogin] = useState(false);
+  
+  const userBg = useColorModeValue('blackAlpha.100', 'whiteAlpha.100');
+  const toast = useToast();
 
   useEffect(() => {
     loadAPI();
@@ -73,6 +86,7 @@ export default function SimpleSidebar({ children }) {
   useEffect(() => {
     loadCategory();
     loadLocalStorage();
+    firstAuth();
   }, [])
 
   function loadAPI() {
@@ -136,6 +150,41 @@ export default function SimpleSidebar({ children }) {
     }
   }
 
+  const firstAuth = () => {
+    // 토큰 존재 여부 체크
+    if (localStorage.getItem('X-Access-Token') === '' || localStorage.getItem('X-Access-Token') === undefined) {
+      localStorage.setItem('X-Access-Token', '');
+      return false;
+    }
+
+    // 토큰 유효성 체크
+    axios.post(apiBaseURL + '/auth/validate', {}, {
+          headers: {
+            'X-Access-Token': localStorage.getItem('X-Access-Token')
+          }
+        }
+      )
+      .then(Response => {
+        if (Response.data.code === 'SUCCESS') {
+          setIsLogin(true);
+          setUser(Response.data.data);
+        }
+      })
+      .catch(error => {
+        localStorage.setItem('X-Access-Token', '');
+        toast({
+          title: (
+            <>
+            로그인 정보가 만료되었습니다. <Link color='blue.400' href="/login">다시 로그인</Link>해주세요.
+            </>
+          ),
+          status: 'error',
+          duration: null,
+          isClosable: true
+        })
+      })
+  }
+
   const { isOpen: modalIsOpen, onOpen: modalOnOpen, onClose: modalOnClose } = useDisclosure();
 
   return (
@@ -143,7 +192,7 @@ export default function SimpleSidebar({ children }) {
       <SettingModal isOpen={modalIsOpen} onOpen={modalOnOpen} onClose={modalOnClose} data={{useCopy, setUseCopy, copyType, setCopyType, mnameClickEvent, setMnameClickEvent}}/>
       <SidebarContent
         onClose={() => onClose}
-        data={{modalOnOpen, colorMode, toggleColorMode, categoryItems, keyword, setKeyword, selectedCategory, setSelectedCategory, categoryStr, setCategoryStr}}
+        data={{user, userBg, isLogin, modalOnOpen, colorMode, toggleColorMode, categoryItems, keyword, setKeyword, selectedCategory, setSelectedCategory, categoryStr, setCategoryStr}}
         display={{ base: 'none', md: 'block' }}
       />
       <Drawer
@@ -155,7 +204,7 @@ export default function SimpleSidebar({ children }) {
         onOverlayClick={onClose}
         size="full">
         <DrawerContent>
-          <SidebarContent data={{modalOnOpen, colorMode, toggleColorMode, categoryItems, keyword, setKeyword, selectedCategory, setSelectedCategory, categoryStr, setCategoryStr}} onClose={onClose} />
+          <SidebarContent data={{user, userBg, isLogin, modalOnOpen, colorMode, toggleColorMode, categoryItems, keyword, setKeyword, selectedCategory, setSelectedCategory, categoryStr, setCategoryStr}} onClose={onClose} />
         </DrawerContent>
       </Drawer>
       {/* mobilenav */}
@@ -180,7 +229,7 @@ export default function SimpleSidebar({ children }) {
         <Flex justifyContent="center" flexDirection="row" flexWrap="wrap">
           {
             musicItems.map(item => {
-              return <Music apiData={item} key={item.idx} data={{useCopy, copyType, mnameClickEvent}}></Music>;
+              return <Music apiData={item} key={item.idx} data={{isLogin, useCopy, copyType, mnameClickEvent}}></Music>;
             })
           }
         </Flex>
@@ -289,7 +338,35 @@ const SidebarContent = ({ onClose, data, ...rest }) => {
           <Flex mx="8" flexDirection="column">
             <Divider />
           </Flex>
-          
+
+          {
+            data.isLogin && (
+              <>
+                <Flex p={2} alignItems="center" justifyContent="space-between" bg={data.userBg} mx="8" mb="4" flexDirection="row" >
+                  <Flex flexDir="row">
+                    <Avatar size="sm" name={data.user.name} src={data.user.profile_img} mr="2" />
+                    <Flex flexDirection="column">
+                      <Text fontSize="xx-small">관리자</Text>
+                      <Text fontSize="sm" fontWeight="semibold">{data.user.name}</Text>
+                    </Flex>
+                  </Flex>
+                  <Flex fontSize="xs" flexDirection="column" justifyContent="space-evenly" h="100%">
+                    <FiUser style={{cursor: 'pointer'}} onClick={() => {}} />
+                    <FiLogOut style={{cursor: 'pointer'}} onClick={() => { localStorage.setItem('X-Access-Token', ''); document.location.reload(); }} />
+                  </Flex>
+                </Flex>
+
+                <Flex mx="8" flexDirection="column">
+                    <Button isFullWidth mb="2" size="sm"><FiSettings size="12" />&nbsp;노래 추가</Button>
+                    <Button isFullWidth mb="2" size="sm"><FiSettings size="12" />&nbsp;카테고리 관리</Button>
+                    <Button isFullWidth mb="2" size="sm"><FiSettings size="12" />&nbsp;가수 관리</Button>
+                    <Button isFullWidth mb="2" size="sm"><FiSettings size="12" />&nbsp;회원 관리</Button>
+                    <Button isFullWidth size="sm"><FiSettings size="12" />&nbsp;통계</Button>
+                </Flex>
+              </>
+            )
+          }
+        
           <Flex justifyContent="center" mt="4" mb="4">
             <IconButton
               variant='outline'
@@ -342,37 +419,6 @@ const SidebarContent = ({ onClose, data, ...rest }) => {
         <Text fontSize={14} textAlign="center" fontFamily="IBM Plex Sans KR" mb='8px'>검색 기능 추가 예정입니다</Text>
       </Flex> */}
     </Box>
-  );
-};
-
-const NavItem = ({ icon, children, ...rest }) => {
-  return (
-    <Link href="#" style={{ textDecoration: 'none' }} _focus={{ boxShadow: 'none' }}>
-      <Flex
-        align="center"
-        p="4"
-        mx="4"
-        borderRadius="lg"
-        role="group"
-        cursor="pointer"
-        _hover={{
-          bg: 'cyan.400',
-          color: 'white',
-        }}
-        {...rest}>
-        {icon && (
-          <Icon
-            mr="4"
-            fontSize="16"
-            _groupHover={{
-              color: 'white',
-            }}
-            as={icon}
-          />
-        )}
-        {children}
-      </Flex>
-    </Link>
   );
 };
 

@@ -1,5 +1,7 @@
 import { ChakraProvider } from "@chakra-ui/react"
+import { Routes, Route } from 'react-router-dom';
 import Main from './Main'
+import Login from './Login'
 
 function App() {
   const setVh = () => {
@@ -9,9 +11,21 @@ function App() {
   setVh();
 
   return (
-    <ChakraProvider>
-      <Main />
-    </ChakraProvider>
+    <>
+    <Routes>
+      <Route path="/" exact={true} element={
+        <ChakraProvider>
+          <Main />
+        </ChakraProvider>
+      } />
+
+      <Route path="/login" exact={true} element={
+        <ChakraProvider>
+          <Login />
+        </ChakraProvider>
+      } />
+    </Routes>
+    </>
   );
 }
 
