@@ -226,7 +226,7 @@ export default function SimpleSidebar({ children }) {
     .then(Response => {
       if (Response.data.code === 'SUCCESS') {
         toast({
-          title: '곡을 삭제했습니다.',
+          title: '노래를 삭제했습니다.',
           status: 'success',
           isClosable: true
         });
@@ -259,7 +259,7 @@ export default function SimpleSidebar({ children }) {
       <UserModal isOpen={UserModalIsOpen} onOpen={UserModalOnOpen} onClose={UserModalOnClose} data={{apiBaseURL, loadFromModal, setLoadFromModal, useCopy, setUseCopy, copyType, setCopyType, mnameClickEvent, setMnameClickEvent}}/>
       <AddMusicModal isOpen={AddMusicModalIsOpen} onOpen={AddMusicModalOnOpen} onClose={AddMusicModalOnClose} data={{apiBaseURL, loadFromModal, setLoadFromModal, categoryItems}}/>
       <AuthorModal isOpen={AuthorModalIsOpen} onOpen={AuthorModalOnOpen} onClose={AuthorModalOnClose} data={{apiBaseURL, loadFromModal, setLoadFromModal, useCopy, setUseCopy, copyType, setCopyType, mnameClickEvent, setMnameClickEvent}}/>
-      <CategoryModal isOpen={CategoryModalIsOpen} onOpen={CategoryModalOnOpen} onClose={CategoryModalOnClose} data={{apiBaseURL, loadFromModal, setLoadFromModal, useCopy, setUseCopy, copyType, setCopyType, mnameClickEvent, setMnameClickEvent}}/>
+      <CategoryModal isOpen={CategoryModalIsOpen} onOpen={CategoryModalOnOpen} onClose={CategoryModalOnClose} data={{apiBaseURL, loadFromModal, categoryItems, setLoadFromModal, useCopy, setUseCopy, copyType, setCopyType, mnameClickEvent, setMnameClickEvent}}/>
       <EditMusicModal isOpen={EditMusicModalIsOpen} onOpen={EditMusicModalOnOpen} onClose={EditMusicModalOnClose} data={{apiBaseURL, categoryItems,editTarget, loadFromModal, setLoadFromModal, useCopy, setUseCopy, copyType, setCopyType, mnameClickEvent, setMnameClickEvent}}/>
       <StatModal isOpen={StatModalIsOpen} onOpen={StatModalOnOpen} onClose={StatModalOnClose} data={{apiBaseURL, loadFromModal, setLoadFromModal, useCopy, setUseCopy, copyType, setCopyType, mnameClickEvent, setMnameClickEvent}}/>
       <UserManageModal isOpen={UserManageModalIsOpen} onOpen={UserManageModalOnOpen} onClose={UserManageModalOnClose} data={{apiBaseURL, loadFromModal, setLoadFromModal, useCopy, setUseCopy, copyType, setCopyType, mnameClickEvent, setMnameClickEvent}}/>
@@ -271,11 +271,11 @@ export default function SimpleSidebar({ children }) {
         <AlertDialogOverlay>
           <AlertDialogContent>
             <AlertDialogHeader fontSize='lg' fontWeight='bold'>
-              곡 삭제
+              노래 삭제
             </AlertDialogHeader>
 
             <AlertDialogBody>
-              정말 삭제하시겠습니까? 삭제한 곡은 복구할 수 없습니다.
+              정말 삭제하시겠습니까? 삭제한 노래는 복구할 수 없습니다.
             </AlertDialogBody>
 
             <AlertDialogFooter>
