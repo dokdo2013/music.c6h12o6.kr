@@ -35,6 +35,11 @@ import {
   Image,
   Badge,
   useColorModeValue,
+  List,
+  ListItem,
+  ListIcon,
+  OrderedList,
+  UnorderedList,
   Icon,
   chakra,
   Tooltip,
@@ -47,7 +52,7 @@ import { FiShoppingCart, FiCopy, FiInfo } from 'react-icons/fi';
 import { RiFileCopy2Fill } from 'react-icons/ri';
 import { FaUserLock } from 'react-icons/fa';
 import Music from './Music';
-import { isLabelWithInternallyDisabledControl } from '@testing-library/user-event/dist/utils';
+import axios from 'axios';
 
 function AddMusicModal({isOpen, onOpen, onClose, data}) {
   const [show, setShow] = useState(false)
@@ -101,16 +106,65 @@ function AddMusicModal({isOpen, onOpen, onClose, data}) {
     }
   }
 
-  const saveItem = () => {
-    saveAPI();
-    close();
+  const saveItem = async () => {
+    if (await saveAPI()) {
+      close();
+    }
   }
 
   const saveItemGo = () => {
     saveAPI();
   }
 
-  const saveAPI = () => {
+  const saveAPI = async () => {
+    if(musicName === '' || musicName === '곡명 예시' || authorName === '가수명 예시' || authorName === '') {
+      toast({
+        title: '모든 칸을 입력해주세요.',
+        status: 'error',
+        isClosable: true,
+      });
+      return false;  
+    }
+
+    const dt = {
+      'name': musicName,
+      'author_name': authorName,
+      'category_idx': category,
+      'album_cover': albumCover,
+      'comment': comment
+    };
+
+    let result = {};
+    try {
+      result = await axios.post(
+        data.apiBaseURL + '/music',
+        dt, {
+          headers: {
+            'X-Access-Token': localStorage.getItem('X-Access-Token')
+          }
+        }
+      )
+    } catch (error) {
+      console.log(error);
+    } finally {
+      data.setLoadFromModal(Math.random(0,10000));
+      if (result.status === 201) {
+        toast({
+          title: '곡을 성공적으로 추가했습니다.',
+          status: 'success',
+          isClosable: true,
+        });  
+        return true;
+      } else {
+        toast({
+          title: result.data.message,
+          status: 'error',
+          isClosable: true,
+        });  
+        return false;
+      }
+    }
+
 
   }
 
@@ -168,6 +222,16 @@ function AddMusicModal({isOpen, onOpen, onClose, data}) {
                   <Input id='music_name' placeholder="곡명 예시" type='text' onChange={e => {
                       setMusicName(e.target.value);
                     }} />
+                    {/* <List>
+                      <ListItem>ddd</ListItem>
+                      <ListItem>ddd</ListItem>
+                      <ListItem>ddd</ListItem>
+                      <ListItem>ddd</ListItem>
+                      <ListItem>ddd</ListItem>
+                      <ListItem>ddd</ListItem>
+                      <ListItem>ddd</ListItem>
+                      <ListItem>ddd</ListItem>
+                    </List> */}
                   <FormHelperText>한글 10자 / 영문 15자 이내 권장 (영역 초과시 ... 표시)</FormHelperText>
                 </FormControl>
                 <FormControl mb="3">
@@ -195,6 +259,7 @@ function AddMusicModal({isOpen, onOpen, onClose, data}) {
             </Flex>
           </ModalBody>
           <ModalFooter>
+            <Button colorScheme='gray' mr="1" onClick={onClose}>닫기</Button>
             <Button colorScheme='gray' mr="1" onClick={saveItemGo}>추가하고 계속</Button>
             <Button colorScheme='purple' onClick={saveItem}>추가</Button>
             {/* <Button onClick={onClose} ml="1">취소</Button> */}

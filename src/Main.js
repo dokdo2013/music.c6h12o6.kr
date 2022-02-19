@@ -30,7 +30,13 @@ import {
   BoxProps,
   FlexProps,
   ButtonGroup,
-  useToast
+  useToast,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
 } from '@chakra-ui/react';
 import {
   FiHome,
@@ -51,7 +57,7 @@ import { AiOutlinePlusCircle } from 'react-icons/ai';
 import { GrSoundcloud } from 'react-icons/gr'; 
 import { FaUsersCog } from 'react-icons/fa'; 
 import { IoMdMicrophone } from 'react-icons/io'; 
-import { ReactText } from 'react';
+import { ReactText, useRef } from 'react';
 import Music from './Components/Music';
 import SettingModal from './Components/SettingModal';
 import UserModal from './Components/UserModal';
@@ -86,13 +92,21 @@ export default function SimpleSidebar({ children }) {
   const [mnameClickEvent, setMnameClickEvent] = useState(1);
   const [user, setUser] = useState({});
   const [isLogin, setIsLogin] = useState(false);
+  const [loadFromModal, setLoadFromModal] = useState(0);
   
   const userBg = useColorModeValue('blackAlpha.100', 'whiteAlpha.100');
   const toast = useToast();
 
+  const [deleteIsOpen, setDeleteIsOpen] = useState(false)
+  const [deleteTarget, setDeleteTarget] = useState(0);
+  const [editTarget, setEditTarget] = useState(0);
+  const deleteOnClose = () => setDeleteIsOpen(false)
+  const deleteCancelRef = useRef()
+
   useEffect(() => {
     loadAPI();
-  }, [order, orderType, keyword, categoryStr])
+    loadCategory();
+  }, [order, orderType, keyword, categoryStr, loadFromModal])
 
   useEffect(() => {
     loadCategory();
@@ -203,6 +217,33 @@ export default function SimpleSidebar({ children }) {
       })
   }
 
+  const deleteMusic = idx => {
+    axios.delete(apiBaseURL + '/music/' + idx, {
+      headers: {
+        'X-Access-Token': localStorage.getItem('X-Access-Token')
+      }
+    })
+    .then(Response => {
+      if (Response.data.code === 'SUCCESS') {
+        toast({
+          title: '곡을 삭제했습니다.',
+          status: 'success',
+          isClosable: true
+        });
+      }
+      setLoadFromModal(Math.random(0,10000));
+    })
+    .catch(error => {
+      toast({
+        title: error.response.data.message,
+        status: 'error',
+        isClosable: true
+      });
+    })
+    .finally(() => {
+      deleteOnClose();
+    })
+  }
   const { isOpen: modalIsOpen, onOpen: modalOnOpen, onClose: modalOnClose } = useDisclosure();
   const { isOpen: UserModalIsOpen, onOpen: UserModalOnOpen, onClose: UserModalOnClose } = useDisclosure();
   const { isOpen: AddMusicModalIsOpen, onOpen: AddMusicModalOnOpen, onClose: AddMusicModalOnClose } = useDisclosure();
@@ -214,14 +255,40 @@ export default function SimpleSidebar({ children }) {
 
   return (
     <Box id="main" minH="100%" bg={useColorModeValue('gray.100', 'gray.900')}>
-      <SettingModal isOpen={modalIsOpen} onOpen={modalOnOpen} onClose={modalOnClose} data={{useCopy, setUseCopy, copyType, setCopyType, mnameClickEvent, setMnameClickEvent}}/>
-      <UserModal isOpen={UserModalIsOpen} onOpen={UserModalOnOpen} onClose={UserModalOnClose} data={{useCopy, setUseCopy, copyType, setCopyType, mnameClickEvent, setMnameClickEvent}}/>
-      <AddMusicModal isOpen={AddMusicModalIsOpen} onOpen={AddMusicModalOnOpen} onClose={AddMusicModalOnClose} data={{categoryItems}}/>
-      <AuthorModal isOpen={AuthorModalIsOpen} onOpen={AuthorModalOnOpen} onClose={AuthorModalOnClose} data={{useCopy, setUseCopy, copyType, setCopyType, mnameClickEvent, setMnameClickEvent}}/>
-      <CategoryModal isOpen={CategoryModalIsOpen} onOpen={CategoryModalOnOpen} onClose={CategoryModalOnClose} data={{useCopy, setUseCopy, copyType, setCopyType, mnameClickEvent, setMnameClickEvent}}/>
-      <EditMusicModal isOpen={EditMusicModalIsOpen} onOpen={EditMusicModalOnOpen} onClose={EditMusicModalOnClose} data={{useCopy, setUseCopy, copyType, setCopyType, mnameClickEvent, setMnameClickEvent}}/>
-      <StatModal isOpen={StatModalIsOpen} onOpen={StatModalOnOpen} onClose={StatModalOnClose} data={{useCopy, setUseCopy, copyType, setCopyType, mnameClickEvent, setMnameClickEvent}}/>
-      <UserManageModal isOpen={UserManageModalIsOpen} onOpen={UserManageModalOnOpen} onClose={UserManageModalOnClose} data={{useCopy, setUseCopy, copyType, setCopyType, mnameClickEvent, setMnameClickEvent}}/>
+      <SettingModal isOpen={modalIsOpen} onOpen={modalOnOpen} onClose={modalOnClose} data={{apiBaseURL, loadFromModal, setLoadFromModal, useCopy, setUseCopy, copyType, setCopyType, mnameClickEvent, setMnameClickEvent}}/>
+      <UserModal isOpen={UserModalIsOpen} onOpen={UserModalOnOpen} onClose={UserModalOnClose} data={{apiBaseURL, loadFromModal, setLoadFromModal, useCopy, setUseCopy, copyType, setCopyType, mnameClickEvent, setMnameClickEvent}}/>
+      <AddMusicModal isOpen={AddMusicModalIsOpen} onOpen={AddMusicModalOnOpen} onClose={AddMusicModalOnClose} data={{apiBaseURL, loadFromModal, setLoadFromModal, categoryItems}}/>
+      <AuthorModal isOpen={AuthorModalIsOpen} onOpen={AuthorModalOnOpen} onClose={AuthorModalOnClose} data={{apiBaseURL, loadFromModal, setLoadFromModal, useCopy, setUseCopy, copyType, setCopyType, mnameClickEvent, setMnameClickEvent}}/>
+      <CategoryModal isOpen={CategoryModalIsOpen} onOpen={CategoryModalOnOpen} onClose={CategoryModalOnClose} data={{apiBaseURL, loadFromModal, setLoadFromModal, useCopy, setUseCopy, copyType, setCopyType, mnameClickEvent, setMnameClickEvent}}/>
+      <EditMusicModal isOpen={EditMusicModalIsOpen} onOpen={EditMusicModalOnOpen} onClose={EditMusicModalOnClose} data={{apiBaseURL, categoryItems,editTarget, loadFromModal, setLoadFromModal, useCopy, setUseCopy, copyType, setCopyType, mnameClickEvent, setMnameClickEvent}}/>
+      <StatModal isOpen={StatModalIsOpen} onOpen={StatModalOnOpen} onClose={StatModalOnClose} data={{apiBaseURL, loadFromModal, setLoadFromModal, useCopy, setUseCopy, copyType, setCopyType, mnameClickEvent, setMnameClickEvent}}/>
+      <UserManageModal isOpen={UserManageModalIsOpen} onOpen={UserManageModalOnOpen} onClose={UserManageModalOnClose} data={{apiBaseURL, loadFromModal, setLoadFromModal, useCopy, setUseCopy, copyType, setCopyType, mnameClickEvent, setMnameClickEvent}}/>
+      <AlertDialog
+        isOpen={deleteIsOpen}
+        leastDestructiveRef={deleteCancelRef}
+        onClose={deleteOnClose}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize='lg' fontWeight='bold'>
+              곡 삭제
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              정말 삭제하시겠습니까? 삭제한 곡은 복구할 수 없습니다.
+            </AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button ref={deleteCancelRef} onClick={deleteOnClose}>
+                취소
+              </Button>
+              <Button colorScheme='red' onClick={() => {deleteMusic(deleteTarget);}} ml={3}>
+                삭제
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
       <SidebarContent
         onClose={() => onClose}
         data={{user, userBg, isLogin, modalOnOpen, UserModalOnOpen, AddMusicModalOnOpen, AuthorModalOnOpen, CategoryModalOnOpen, EditMusicModalOnOpen, StatModalOnOpen, UserManageModalOnOpen, colorMode, toggleColorMode, categoryItems, keyword, setKeyword, selectedCategory, setSelectedCategory, categoryStr, setCategoryStr}}
@@ -244,7 +311,7 @@ export default function SimpleSidebar({ children }) {
       <Box ml={{ base: 0, md: 60 }} p="4">
         <Flex justifyContent="space-between" mb="4" alignItems="center">
           <Text fontSize={14} display="flex" alignItems="center">
-            총 {totalItem}곡 중 {searchedItemNum}곡 <BiRefresh style={{marginLeft: '2px', cursor: 'pointer', minWidth: '14px'}} onClick={loadAPI} />
+            총 {totalItem}곡 중 {searchedItemNum}곡 <BiRefresh style={{marginLeft: '2px', cursor: 'pointer', minWidth: '14px'}} onClick={() => {loadAPI(); loadCategory();}} />
           </Text>
           <Stack direction='row' spacing={0} align='center'>
             <Button colorScheme={(order === 'm.name') ? 'purple' : 'teal'} variant='ghost' size="sm" onClick={() => {changeOrder('m.name')}}>
@@ -261,11 +328,11 @@ export default function SimpleSidebar({ children }) {
         <Flex justifyContent="center" flexDirection="row" flexWrap="wrap">
           {
             musicItems.map(item => {
-              return <Music apiData={item} key={item.idx} data={{EditMusicModalOnOpen, isLogin, useCopy, copyType, mnameClickEvent}}></Music>;
+              return <Music apiData={item} key={item.idx} data={{setEditTarget, setDeleteTarget, setDeleteIsOpen, EditMusicModalOnOpen, isLogin, useCopy, copyType, mnameClickEvent}}></Music>;
             })
           }
           {
-            searchedItemNum === 0 && (
+            (searchedItemNum === 0 && !loading) && (
               <Text mt="6">검색 결과가 없습니다</Text>
             )
           }
