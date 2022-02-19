@@ -65,8 +65,8 @@ import UserManageModal from './Components/UserManageModal';
 import axios from 'axios';
 
 // const apiBaseURL = "http://localhost:9090";
-const apiBaseURL = "http://172.30.1.2:9090";
-// const apiBaseURL = "https://api.c6h12o6.kr";
+// const apiBaseURL = "http://172.30.1.2:9090";
+const apiBaseURL = "https://api.c6h12o6.kr";
 
 export default function SimpleSidebar({ children }) {
   const { colorMode, toggleColorMode } = useColorMode();

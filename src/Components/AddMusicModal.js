@@ -93,10 +93,12 @@ function AddMusicModal({isOpen, onOpen, onClose, data}) {
   }, [])
 
   const firstCategory = () => {
-    const catItem = data.categoryItems[0];
-    setCategory(catItem.idx);
-    setCategoryName(catItem.name);
-    setCategoryColor(catItem.color_scheme);
+    if (data.categoryItems.length > 0) {
+      const catItem = data.categoryItems[0];
+      setCategory(catItem.idx);
+      setCategoryName(catItem.name);
+      setCategoryColor(catItem.color_scheme);
+    }
   }
 
   const saveItem = () => {
@@ -109,7 +111,7 @@ function AddMusicModal({isOpen, onOpen, onClose, data}) {
   }
 
   const saveAPI = () => {
-    
+
   }
 
   const close = () => {
