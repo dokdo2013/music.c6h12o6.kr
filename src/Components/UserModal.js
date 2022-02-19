@@ -105,6 +105,8 @@ function UserModal({isOpen, onOpen, onClose, data}) {
           isClosable: true,
         });  
         onClose();
+        setNowPassword('');
+        setNewPassword('');
       } else {
         toast({
           title: result.data.message,
