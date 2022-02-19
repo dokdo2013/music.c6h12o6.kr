@@ -65,8 +65,8 @@ import UserManageModal from './Components/UserManageModal';
 import axios from 'axios';
 
 // const apiBaseURL = "http://localhost:9090";
-// const apiBaseURL = "http://172.30.1.2:9090";
-const apiBaseURL = "https://api.c6h12o6.kr";
+const apiBaseURL = "http://172.30.1.2:9090";
+// const apiBaseURL = "https://api.c6h12o6.kr";
 
 export default function SimpleSidebar({ children }) {
   const { colorMode, toggleColorMode } = useColorMode();
@@ -216,7 +216,7 @@ export default function SimpleSidebar({ children }) {
     <Box id="main" minH="100%" bg={useColorModeValue('gray.100', 'gray.900')}>
       <SettingModal isOpen={modalIsOpen} onOpen={modalOnOpen} onClose={modalOnClose} data={{useCopy, setUseCopy, copyType, setCopyType, mnameClickEvent, setMnameClickEvent}}/>
       <UserModal isOpen={UserModalIsOpen} onOpen={UserModalOnOpen} onClose={UserModalOnClose} data={{useCopy, setUseCopy, copyType, setCopyType, mnameClickEvent, setMnameClickEvent}}/>
-      <AddMusicModal isOpen={AddMusicModalIsOpen} onOpen={AddMusicModalOnOpen} onClose={AddMusicModalOnClose} data={{useCopy, setUseCopy, copyType, setCopyType, mnameClickEvent, setMnameClickEvent}}/>
+      <AddMusicModal isOpen={AddMusicModalIsOpen} onOpen={AddMusicModalOnOpen} onClose={AddMusicModalOnClose} data={{categoryItems}}/>
       <AuthorModal isOpen={AuthorModalIsOpen} onOpen={AuthorModalOnOpen} onClose={AuthorModalOnClose} data={{useCopy, setUseCopy, copyType, setCopyType, mnameClickEvent, setMnameClickEvent}}/>
       <CategoryModal isOpen={CategoryModalIsOpen} onOpen={CategoryModalOnOpen} onClose={CategoryModalOnClose} data={{useCopy, setUseCopy, copyType, setCopyType, mnameClickEvent, setMnameClickEvent}}/>
       <EditMusicModal isOpen={EditMusicModalIsOpen} onOpen={EditMusicModalOnOpen} onClose={EditMusicModalOnClose} data={{useCopy, setUseCopy, copyType, setCopyType, mnameClickEvent, setMnameClickEvent}}/>
@@ -349,7 +349,7 @@ const SidebarContent = ({ onClose, data, ...rest }) => {
 
       <Flex flexDirection="column" justifyContent="space-between" style={{height: 'calc(var(--vh) - 120px)'}}>
         {/* 검색 옵션 영역 */}
-        <Flex overflow="scroll" flexDirection="column">
+        <Flex overflow="auto" flexDirection="column">
           <Flex mx="8" mt="4" flexDirection="column">
             <Text fontSize={12} mb='8px' ml="0.5">카테고리 ({data.categoryItems.length})</Text>
             <Flex flexDirection="row" flexWrap="wrap">

@@ -32,6 +32,10 @@ function ProductAddToCart({apiData, data}) {
     copyData = '!공지/' + apiData.music_name;
   }
 
+  if (!data.preview) {
+    data.preview = false;
+  }
+
   return (
       <Box
         bg={useColorModeValue('white', 'gray.800')}
