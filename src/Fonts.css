@@ -10,6 +10,6 @@ body {
 
 html,
 body, #main {
-   height: 100vh;
-   height: var(--vh);
+  min-height: var(--vh);
+  height: 100%;
 }

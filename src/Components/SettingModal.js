@@ -45,6 +45,7 @@ import {useState} from 'react';
 import { BsStar, BsStarFill, BsStarHalf } from 'react-icons/bs';
 import { FiShoppingCart, FiCopy, FiInfo } from 'react-icons/fi';
 import { RiFileCopy2Fill } from 'react-icons/ri';
+import { FaUserLock } from 'react-icons/fa';
 
 function SettingModal({isOpen, onOpen, onClose, data}) {
   const [show, setShow] = useState(false)
@@ -98,6 +99,7 @@ function SettingModal({isOpen, onOpen, onClose, data}) {
                         <option value="2">곡명 - 가수</option>
                         <option value="3">곡명 (가수)</option>
                         <option value="4">곡명</option>
+                        <option value="5">!공지/곡명</option>
                       </Select>
                     </Flex>
                     <Flex ml="6" mb="4" style={{width: '100%'}} alignItems="center" justifyContent="space-between">
@@ -126,7 +128,7 @@ function SettingModal({isOpen, onOpen, onClose, data}) {
                   <br />
                   <Text fontSize="lg" fontWeight="semibold">쿠키(cookie)란?</Text>
                   <br />
-                  <Text fontSize="sm">본 웹사이트는 이용자에 대한 정보를 저장하고 수시로 찾아내는 '쿠키(cookie)'를 사용합니다. 쿠키는 웹사이트가 이용자의 컴퓨터 브라우저(넷스케이프, 인터넷 익스플로러 등)로 전송하는 소량의 정보입니다. 이용자가 웹사이트에 접속을 하면 본 웹사이트는 이용자의 브라우저에 있는 쿠키의 내용을 읽고, 이용자의 추가정보를 이용자의 컴퓨터에서 찾아 접속에 따른 성명 등의 추가 입력 없이 서비스를 제공할 수 있습니다. 쿠키는 이용자의 컴퓨터는 식별하지만 이용자를 개인적으로 식별하지는 않습니다.<br /><br />또한 이용자는 쿠키에 대한 선택권이 있습니다. 웹브라우저 상단의 도구 > 인터넷옵션 탭(option tab)에서 모든 쿠키를 다 받아들이거나, 쿠키가 설치될 때 통지를 보내도록 하거나, 아니면 모든 쿠키를 거부할 수 있는 선택권을 가질 수 있습니다. 단, 쿠키의 저장을 거부하실 경우 본 웹사이트에서 제공하는 일부 서비스는 이용하실 수 없게 됩니다.</Text>
+                  <Text fontSize="sm">본 웹사이트는 이용자에 대한 정보를 저장하고 수시로 찾아내는 '쿠키(cookie)'를 사용합니다. 쿠키는 웹사이트가 이용자의 컴퓨터 브라우저(넷스케이프, 인터넷 익스플로러 등)로 전송하는 소량의 정보입니다. 이용자가 웹사이트에 접속을 하면 본 웹사이트는 이용자의 브라우저에 있는 쿠키의 내용을 읽고, 이용자의 추가정보를 이용자의 컴퓨터에서 찾아 접속에 따른 성명 등의 추가 입력 없이 서비스를 제공할 수 있습니다. 쿠키는 이용자의 컴퓨터는 식별하지만 이용자를 개인적으로 식별하지는 않습니다.<br /><br />또한 이용자는 쿠키에 대한 선택권이 있습니다. 웹브라우저 상단의 도구 - 인터넷옵션 탭(option tab)에서 모든 쿠키를 다 받아들이거나, 쿠키가 설치될 때 통지를 보내도록 하거나, 아니면 모든 쿠키를 거부할 수 있는 선택권을 가질 수 있습니다. 단, 쿠키의 저장을 거부하실 경우 본 웹사이트에서 제공하는 일부 서비스는 이용하실 수 없게 됩니다.</Text>
                   <br />
                   <Text fontSize="lg" fontWeight="semibold">쿠키(cookie) 운용 목적</Text>
                   <br />
@@ -155,6 +157,12 @@ function SettingModal({isOpen, onOpen, onClose, data}) {
                   <Text fontSize="sm">Copyrights © <span style={{fontWeight: 'bold'}}>c6h12o6.kr</span>. All Rights Reserved.</Text>
                   <Text fontSize="sm">TWITCH, the TWITCH Logo, the Glitch Logo, and/or TWITCHTV are trademarks of Twitch Interactive, Inc. or its affiliates.</Text>
                   <Text fontSize="sm">앨범아트의 저작권 일체는 음원 소유자에게 있습니다.</Text>
+                  <br />
+                  <Flex justifyContent="center">
+                    <Link href="/login" style={{textDecoration: 'none'}}>
+                      <Button colorScheme="purple"><FaUserLock />&nbsp;관리자 로그인</Button>
+                    </Link>
+                  </Flex>
                 </TabPanel>
               </TabPanels>
             </Tabs>

@@ -31,7 +31,7 @@ export default function SimpleCard() {
   const [isChecked, setIsChecked] = useState(false);
 
   useEffect(() => {
-    if (localStorage.getItem('remember_id') !== '' && localStorage.getItem('remember_id') !== undefined) {
+    if (localStorage.getItem('remember_id') !== '' && localStorage.getItem('remember_id') !== undefined && localStorage.getItem('remember_id') !== null) {
       user_id.current.value = localStorage.getItem('remember_id');
       setIsChecked(true);
     }

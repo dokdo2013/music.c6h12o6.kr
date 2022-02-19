@@ -28,6 +28,8 @@ function ProductAddToCart({apiData, data}) {
     copyData = apiData.music_name + ' (' + apiData.author_name + ')';
   } else if (parseInt(data.copyType) === 4) {
     copyData = apiData.music_name;
+  } else if (parseInt(data.copyType) === 5) {
+    copyData = '!공지/' + apiData.music_name;
   }
 
   return (
@@ -138,7 +140,7 @@ function ProductAddToCart({apiData, data}) {
           {
             data.isLogin && (
               <Flex justifyContent="space-between" alignContent="center" mt="2">
-                <Button size="xs" colorScheme="gray" mr="0.5" isFullWidth>수정</Button>
+                <Button size="xs" colorScheme="gray" mr="0.5" onClick={data.EditMusicModalOnOpen} isFullWidth>수정</Button>
                 <Button size="xs" colorScheme="red" ml="0.5"><FaTrashAlt /></Button>
               </Flex>  
             )

@@ -45,16 +45,27 @@ import {
 } from 'react-icons/fi';
 import { IconType } from 'react-icons';
 import { MoonIcon, SunIcon } from '@chakra-ui/icons';
-import { BiSortDown, BiSortUp, BiRefresh } from 'react-icons/bi'; 
-import { BsTwitch } from 'react-icons/bs'; 
+import { BiSortDown, BiSortUp, BiRefresh, BiCategory } from 'react-icons/bi'; 
+import { BsTwitch, BsBarChartLine, BsPlusCircleFill } from 'react-icons/bs'; 
+import { AiOutlinePlusCircle } from 'react-icons/ai'; 
 import { GrSoundcloud } from 'react-icons/gr'; 
+import { FaUsersCog } from 'react-icons/fa'; 
+import { IoMdMicrophone } from 'react-icons/io'; 
 import { ReactText } from 'react';
 import Music from './Components/Music';
 import SettingModal from './Components/SettingModal';
+import UserModal from './Components/UserModal';
+import AddMusicModal from './Components/AddMusicModal';
+import AuthorModal from './Components/AuthorModal';
+import CategoryModal from './Components/CategoryModal';
+import EditMusicModal from './Components/EditMusicModal';
+import StatModal from './Components/StatModal';
+import UserManageModal from './Components/UserManageModal';
 // import { calcRelativeAxisPosition } from 'framer-motion/types/projection/geometry/delta-calc';
 import axios from 'axios';
 
 // const apiBaseURL = "http://localhost:9090";
+// const apiBaseURL = "http://172.30.1.2:9090";
 const apiBaseURL = "https://api.c6h12o6.kr";
 
 export default function SimpleSidebar({ children }) {
@@ -95,11 +106,18 @@ export default function SimpleSidebar({ children }) {
       .get(apiBaseURL + "/music?per_page=2000&order=" + order + "&order_type=" + orderType + "&search_keyword=" + keyword + "&search_category=" + categoryStr)
       .then((Response)=>{
         if (Response.data.code === 'SUCCESS') {
-          // console.log(Response.data.data.data);
           setMusicItems(Response.data.data.data);
           setTotalItem(Response.data.data.rows);
           setSearchedItemNum(Response.data.data.data.length);
+        } else if (Response.data.code === 'DATA_EMPTY') {
+          setMusicItems([]);
+          setSearchedItemNum(0);
         }
+      })
+      .catch(() => {
+        setMusicItems([]);
+        setTotalItem(0);
+        setSearchedItemNum(0);
       })
       .finally(() => {
         setLoading(false);
@@ -175,7 +193,7 @@ export default function SimpleSidebar({ children }) {
         toast({
           title: (
             <>
-            로그인 정보가 만료되었습니다. <Link color='blue.400' href="/login">다시 로그인</Link>해주세요.
+            로그인 정보가 만료되었습니다. 다시 <Link color='blue.400' href="/login">로그인</Link>해주세요.
             </>
           ),
           status: 'error',
@@ -186,13 +204,27 @@ export default function SimpleSidebar({ children }) {
   }
 
   const { isOpen: modalIsOpen, onOpen: modalOnOpen, onClose: modalOnClose } = useDisclosure();
+  const { isOpen: UserModalIsOpen, onOpen: UserModalOnOpen, onClose: UserModalOnClose } = useDisclosure();
+  const { isOpen: AddMusicModalIsOpen, onOpen: AddMusicModalOnOpen, onClose: AddMusicModalOnClose } = useDisclosure();
+  const { isOpen: AuthorModalIsOpen, onOpen: AuthorModalOnOpen, onClose: AuthorModalOnClose } = useDisclosure();
+  const { isOpen: CategoryModalIsOpen, onOpen: CategoryModalOnOpen, onClose: CategoryModalOnClose } = useDisclosure();
+  const { isOpen: EditMusicModalIsOpen, onOpen: EditMusicModalOnOpen, onClose: EditMusicModalOnClose } = useDisclosure();
+  const { isOpen: StatModalIsOpen, onOpen: StatModalOnOpen, onClose: StatModalOnClose } = useDisclosure();
+  const { isOpen: UserManageModalIsOpen, onOpen: UserManageModalOnOpen, onClose: UserManageModalOnClose } = useDisclosure();
 
   return (
     <Box id="main" minH="100%" bg={useColorModeValue('gray.100', 'gray.900')}>
       <SettingModal isOpen={modalIsOpen} onOpen={modalOnOpen} onClose={modalOnClose} data={{useCopy, setUseCopy, copyType, setCopyType, mnameClickEvent, setMnameClickEvent}}/>
+      <UserModal isOpen={UserModalIsOpen} onOpen={UserModalOnOpen} onClose={UserModalOnClose} data={{useCopy, setUseCopy, copyType, setCopyType, mnameClickEvent, setMnameClickEvent}}/>
+      <AddMusicModal isOpen={AddMusicModalIsOpen} onOpen={AddMusicModalOnOpen} onClose={AddMusicModalOnClose} data={{useCopy, setUseCopy, copyType, setCopyType, mnameClickEvent, setMnameClickEvent}}/>
+      <AuthorModal isOpen={AuthorModalIsOpen} onOpen={AuthorModalOnOpen} onClose={AuthorModalOnClose} data={{useCopy, setUseCopy, copyType, setCopyType, mnameClickEvent, setMnameClickEvent}}/>
+      <CategoryModal isOpen={CategoryModalIsOpen} onOpen={CategoryModalOnOpen} onClose={CategoryModalOnClose} data={{useCopy, setUseCopy, copyType, setCopyType, mnameClickEvent, setMnameClickEvent}}/>
+      <EditMusicModal isOpen={EditMusicModalIsOpen} onOpen={EditMusicModalOnOpen} onClose={EditMusicModalOnClose} data={{useCopy, setUseCopy, copyType, setCopyType, mnameClickEvent, setMnameClickEvent}}/>
+      <StatModal isOpen={StatModalIsOpen} onOpen={StatModalOnOpen} onClose={StatModalOnClose} data={{useCopy, setUseCopy, copyType, setCopyType, mnameClickEvent, setMnameClickEvent}}/>
+      <UserManageModal isOpen={UserManageModalIsOpen} onOpen={UserManageModalOnOpen} onClose={UserManageModalOnClose} data={{useCopy, setUseCopy, copyType, setCopyType, mnameClickEvent, setMnameClickEvent}}/>
       <SidebarContent
         onClose={() => onClose}
-        data={{user, userBg, isLogin, modalOnOpen, colorMode, toggleColorMode, categoryItems, keyword, setKeyword, selectedCategory, setSelectedCategory, categoryStr, setCategoryStr}}
+        data={{user, userBg, isLogin, modalOnOpen, UserModalOnOpen, AddMusicModalOnOpen, AuthorModalOnOpen, CategoryModalOnOpen, EditMusicModalOnOpen, StatModalOnOpen, UserManageModalOnOpen, colorMode, toggleColorMode, categoryItems, keyword, setKeyword, selectedCategory, setSelectedCategory, categoryStr, setCategoryStr}}
         display={{ base: 'none', md: 'block' }}
       />
       <Drawer
@@ -204,7 +236,7 @@ export default function SimpleSidebar({ children }) {
         onOverlayClick={onClose}
         size="full">
         <DrawerContent>
-          <SidebarContent data={{user, userBg, isLogin, modalOnOpen, colorMode, toggleColorMode, categoryItems, keyword, setKeyword, selectedCategory, setSelectedCategory, categoryStr, setCategoryStr}} onClose={onClose} />
+          <SidebarContent data={{user, userBg, isLogin, modalOnOpen, UserModalOnOpen, AddMusicModalOnOpen, AuthorModalOnOpen, CategoryModalOnOpen, EditMusicModalOnOpen, StatModalOnOpen, UserManageModalOnOpen, colorMode, toggleColorMode, categoryItems, keyword, setKeyword, selectedCategory, setSelectedCategory, categoryStr, setCategoryStr}} onClose={onClose} />
         </DrawerContent>
       </Drawer>
       {/* mobilenav */}
@@ -212,7 +244,7 @@ export default function SimpleSidebar({ children }) {
       <Box ml={{ base: 0, md: 60 }} p="4">
         <Flex justifyContent="space-between" mb="4" alignItems="center">
           <Text fontSize={14} display="flex" alignItems="center">
-            총 {totalItem}곡 중 {searchedItemNum}곡 <BiRefresh style={{marginLeft: '2px', cursor: 'pointer'}} onClick={loadAPI} />
+            총 {totalItem}곡 중 {searchedItemNum}곡 <BiRefresh style={{marginLeft: '2px', cursor: 'pointer', minWidth: '14px'}} onClick={loadAPI} />
           </Text>
           <Stack direction='row' spacing={0} align='center'>
             <Button colorScheme={(order === 'm.name') ? 'purple' : 'teal'} variant='ghost' size="sm" onClick={() => {changeOrder('m.name')}}>
@@ -229,11 +261,16 @@ export default function SimpleSidebar({ children }) {
         <Flex justifyContent="center" flexDirection="row" flexWrap="wrap">
           {
             musicItems.map(item => {
-              return <Music apiData={item} key={item.idx} data={{isLogin, useCopy, copyType, mnameClickEvent}}></Music>;
+              return <Music apiData={item} key={item.idx} data={{EditMusicModalOnOpen, isLogin, useCopy, copyType, mnameClickEvent}}></Music>;
             })
           }
+          {
+            searchedItemNum === 0 && (
+              <Text mt="6">검색 결과가 없습니다</Text>
+            )
+          }
         </Flex>
-        <Flex justifyContent="center" alignItems="center">
+        <Flex justifyContent="center" alignItems="center" mt="6">
           <CircularProgress isIndeterminate color='green.300' display={loading ? 'block' : 'none'} />
         </Flex>
       </Box>
@@ -351,17 +388,17 @@ const SidebarContent = ({ onClose, data, ...rest }) => {
                     </Flex>
                   </Flex>
                   <Flex fontSize="xs" flexDirection="column" justifyContent="space-evenly" h="100%">
-                    <FiUser style={{cursor: 'pointer'}} onClick={() => {}} />
+                    <FiUser style={{cursor: 'pointer'}} onClick={data.UserModalOnOpen} />
                     <FiLogOut style={{cursor: 'pointer'}} onClick={() => { localStorage.setItem('X-Access-Token', ''); document.location.reload(); }} />
                   </Flex>
                 </Flex>
 
                 <Flex mx="8" flexDirection="column">
-                    <Button isFullWidth mb="2" size="sm"><FiSettings size="12" />&nbsp;노래 추가</Button>
-                    <Button isFullWidth mb="2" size="sm"><FiSettings size="12" />&nbsp;카테고리 관리</Button>
-                    <Button isFullWidth mb="2" size="sm"><FiSettings size="12" />&nbsp;가수 관리</Button>
-                    <Button isFullWidth mb="2" size="sm"><FiSettings size="12" />&nbsp;회원 관리</Button>
-                    <Button isFullWidth size="sm"><FiSettings size="12" />&nbsp;통계</Button>
+                    <Button isFullWidth mb="2" size="sm" onClick={data.AddMusicModalOnOpen}><BsPlusCircleFill style={{marginRight: '8px'}} size="12" />노래 추가</Button>
+                    <Button isFullWidth mb="2" size="sm" onClick={data.CategoryModalOnOpen}><BiCategory style={{marginRight: '8px'}} size="12" />카테고리 관리</Button>
+                    <Button isFullWidth mb="2" size="sm" onClick={data.AuthorModalOnOpen}><IoMdMicrophone style={{marginRight: '8px'}} size="12" />가수 관리</Button>
+                    <Button isFullWidth mb="2" size="sm" onClick={data.UserManageModalOnOpen}><FaUsersCog style={{marginRight: '8px'}} size="12" />회원 관리</Button>
+                    <Button isFullWidth size="sm" onClick={data.StatModalOnOpen}><BsBarChartLine style={{marginRight: '8px'}} size="12" />통계</Button>
                 </Flex>
               </>
             )
