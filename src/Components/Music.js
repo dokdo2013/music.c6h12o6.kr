@@ -1,23 +1,18 @@
 import {
   AspectRatio,
   Flex,
-  Circle,
   Box,
   Image,
   Badge,
   Button,
   useColorModeValue,
-  Icon,
-  chakra,
   Tooltip,
   useToast,
 } from '@chakra-ui/react';
 import { FaTrashAlt } from 'react-icons/fa';
-import { FiShoppingCart, FiCopy, FiInfo } from 'react-icons/fi';
+import { FiInfo } from 'react-icons/fi';
 import { RiFileCopy2Fill } from 'react-icons/ri';
 import {CopyToClipboard} from 'react-copy-to-clipboard';
-import axios from 'axios';
-import {useState, useRef} from 'react';
 
 function ProductAddToCart({apiData, data}) {
   const toast = useToast();

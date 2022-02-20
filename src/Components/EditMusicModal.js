@@ -135,7 +135,7 @@ function EditMusicModal({isOpen, onOpen, onClose, data}) {
 
   const saveAPI = async () => {
     setMusicName(musicName.trim());
-    setMusicName(authorName.trim());
+    setAuthorName(authorName.trim());
     if(musicName === '' || musicName === '곡명 예시' || authorName === '가수명 예시' || authorName === '') {
       toast({
         title: '모든 칸을 입력해주세요.',
@@ -172,7 +172,6 @@ function EditMusicModal({isOpen, onOpen, onClose, data}) {
       });  
       return false;
     } finally {
-      console.log(result);
       data.setLoadFromModal(Math.random(0,10000));
       if (result.status === 200) {
         toast({

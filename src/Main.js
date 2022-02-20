@@ -57,7 +57,7 @@ import { AiOutlinePlusCircle } from 'react-icons/ai';
 import { GrSoundcloud } from 'react-icons/gr'; 
 import { FaUsersCog } from 'react-icons/fa'; 
 import { IoMdMicrophone } from 'react-icons/io'; 
-import { ReactText, useRef } from 'react';
+import { ReactText, useRef, memo } from 'react';
 import Music from './Components/Music';
 import SettingModal from './Components/SettingModal';
 import UserModal from './Components/UserModal';
@@ -326,11 +326,12 @@ export default function SimpleSidebar({ children }) {
           </Stack>
         </Flex>
         <Flex justifyContent="center" flexDirection="row" flexWrap="wrap">
-          {
+          <MemoMusicWrapper musicItems={musicItems} datas={{setEditTarget, setDeleteTarget, setDeleteIsOpen, EditMusicModalOnOpen, isLogin, useCopy, copyType, mnameClickEvent}} />
+          {/* {
             musicItems.map(item => {
               return <Music apiData={item} key={item.idx} data={{setEditTarget, setDeleteTarget, setDeleteIsOpen, EditMusicModalOnOpen, isLogin, useCopy, copyType, mnameClickEvent}}></Music>;
             })
-          }
+          } */}
           {
             (searchedItemNum === 0 && !loading) && (
               <Text mt="6">검색 결과가 없습니다</Text>
@@ -344,6 +345,20 @@ export default function SimpleSidebar({ children }) {
     </Box>
   );
 }
+
+
+const MusicWrapper = (dt) => {
+  return (
+    <>
+      {
+        dt.musicItems.map(item => {
+          return <Music apiData={item} key={item.idx} data={dt.datas}></Music>;
+        })
+      }
+    </>
+  )
+}
+const MemoMusicWrapper = memo(MusicWrapper);
 
 // interface SidebarProps extends BoxProps {
 //   onClose: () => void;
