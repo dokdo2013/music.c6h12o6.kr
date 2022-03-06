@@ -6,6 +6,7 @@ import {
   Button,
   Checkbox,
   Stack,
+  Spinner,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -42,6 +43,7 @@ import {
   UnorderedList,
   Icon,
   chakra,
+  SimpleGrid,
   Tooltip,
   useToast,
   useDisclosure
@@ -49,6 +51,7 @@ import {
 import {useState, useEffect, useRef} from 'react';
 import { BsStar, BsStarFill, BsStarHalf } from 'react-icons/bs';
 import { FiShoppingCart, FiCopy, FiInfo } from 'react-icons/fi';
+import { AiOutlineArrowLeft } from 'react-icons/ai';
 import { RiFileCopy2Fill } from 'react-icons/ri';
 import { FaUserLock } from 'react-icons/fa';
 import Music from './Music';
@@ -74,8 +77,9 @@ function AddMusicModal({isOpen, onOpen, onClose, data}) {
   
   const catRef = useRef();
   const [category, setCategory] = useState(1);
-  const [categoryName, setCategoryName] = useState('');
-  const [categoryColor, setCategoryColor] = useState('');
+  const [onSearch, setOnSearch] = useState(false);
+  const [categoryName, setCategoryName] = useState('K-POP');
+  const [categoryColor, setCategoryColor] = useState('purple');
   const [musicName, setMusicName] = useState('곡명 예시');
   const [authorName, setAuthorName] = useState('가수명 예시');
   const [comment, setComment] = useState('');
@@ -191,6 +195,70 @@ function AddMusicModal({isOpen, onOpen, onClose, data}) {
     setAlbumCover('https://dummyimage.com/500x500');
   }
 
+  const [firstSearch, setFirstSearch] = useState(false);
+  const [searchRequired, setSearchRequired] = useState(false);
+  const [searchFlag, setSearchFlag] = useState(false);
+  const [onSearching, setOnSearching] = useState(false);
+  const [searchKeyword, setSearchKeyword] = useState('');
+  const [searchMessage, setSearchMessage] = useState('');
+  const [searchNum, setSearchNum] = useState(0);
+  const [searchResult, setSearchResult] = useState([]);
+  let itemKey = 0;
+
+  const albumSearch = () => {
+    setOnSearch(true);
+  }
+
+  const cancelSearch = () => {
+    setOnSearch(false);
+    setFirstSearch(false);
+    setSearchRequired(false);
+    setSearchFlag(false);
+    setSearchKeyword('');
+    setSearchNum(0);
+    setSearchResult([]);
+  }
+
+  const trySearch = () => {
+    setOnSearching(true);
+    firstSearch || setFirstSearch(true);
+    if (searchKeyword.trim().length === 0) {
+      setSearchRequired(true);
+      setSearchFlag(false);
+      setOnSearching(false);
+      return false;
+    } else {
+      setSearchRequired(false);
+      setSearchFlag(true);
+    }
+
+    axios.get(data.apiBaseURL + '/music/search/album_cover/' + searchKeyword)
+      .then(Response => {
+        if (Response.data.code === 'SUCCESS') {
+          setSearchNum(Response.data.data.rows);
+          setSearchResult(Response.data.data.data);
+          setSearchMessage('');
+        } else {
+          console.log(Response.data.code + ' / ' + Response.data.message);
+          setSearchNum(0);
+          setSearchResult([]);
+          setSearchMessage(Response.data.message);
+        }
+      })
+      .catch(error => {
+        setSearchMessage('오류가 발생했습니다. 다시 시도해주세요.');
+        console.log(error);
+      })
+      .finally(() => {
+        setOnSearching(false);
+      });
+  }
+
+  const pickSearch = item => {
+    setAlbumCover(item);
+    cancelSearch();
+  }
+
   return (
     <>
       <Modal closeOnOverlayClick={false} onClose={close} isOpen={isOpen} isCentered={false} colorScheme="puprle" scrollBehavior='inside' size="xl">
@@ -198,7 +266,7 @@ function AddMusicModal({isOpen, onOpen, onClose, data}) {
         <ModalContent>
           <ModalHeader>노래 추가</ModalHeader>
           <ModalCloseButton />
-          <ModalBody>
+          <ModalBody style={{display: onSearch ? 'none' : 'block'}}>
             <Flex flexDirection="row" justifyContent="space-between">
               <Flex flexDirection="column">
                 <Text ml="1" fontSize="sm">미리보기</Text>
@@ -230,16 +298,6 @@ function AddMusicModal({isOpen, onOpen, onClose, data}) {
                   <Input id='music_name' placeholder="곡명 예시" type='text' onChange={e => {
                       setMusicName(e.target.value);
                     }} />
-                    {/* <List>
-                      <ListItem>ddd</ListItem>
-                      <ListItem>ddd</ListItem>
-                      <ListItem>ddd</ListItem>
-                      <ListItem>ddd</ListItem>
-                      <ListItem>ddd</ListItem>
-                      <ListItem>ddd</ListItem>
-                      <ListItem>ddd</ListItem>
-                      <ListItem>ddd</ListItem>
-                    </List> */}
                   <FormHelperText>한글 10자 / 영문 15자 이내 권장 (영역 초과시 ... 표시)</FormHelperText>
                 </FormControl>
                 <FormControl mb="3">
@@ -251,9 +309,12 @@ function AddMusicModal({isOpen, onOpen, onClose, data}) {
                 </FormControl>
                 <FormControl mb="3">
                   <FormLabel htmlFor='album_cover'>앨범 이미지 url *</FormLabel>
-                  <Input id='album_cover' placeholder="앨범 이미지 예시" type='text' onChange={e => {
-                      setAlbumCover(e.target.value);
-                    }} />
+                  <Flex>
+                    <Input id='album_cover' placeholder="앨범 이미지 예시" type='text' onChange={e => {
+                        setAlbumCover(e.target.value);
+                      }} value={albumCover} />
+                    <Button ml="1" onClick={albumSearch}>찾기</Button>
+                  </Flex>
                   <FormHelperText>정사각형 권장 (정사각형 비율 아니면 잘리는 부분 발생)</FormHelperText>
                 </FormControl>
                 <FormControl mb="3">
@@ -266,11 +327,54 @@ function AddMusicModal({isOpen, onOpen, onClose, data}) {
               </Flex>
             </Flex>
           </ModalBody>
-          <ModalFooter>
-            <Button colorScheme='gray' mr="1" onClick={onClose}>닫기</Button>
+          <ModalBody style={{display: onSearch ? 'block' : 'none'}}>
+            <Text color="gray" fontSize="small">
+              <Flex>
+                <Flex onClick={cancelSearch} alignItems='center' style={{cursor: 'pointer'}}>
+                  <AiOutlineArrowLeft size="10" style={{marginRight: '4px'}} /> 이전으로 돌아가기
+                </Flex>
+              </Flex>
+            </Text>
+            <FormControl mb="3" mt="3">
+              <Flex>  
+                {/* <FormLabel htmlFor='search_album'>앨범아트</FormLabel> */}
+                <Input placeholder='앨범아트 검색어를 입력해주세요' id='search_album' type='text' onChange={e => {
+                    setSearchKeyword(e.target.value);
+                  }} value={searchKeyword} />
+                <Button ml="1" onClick={trySearch}>검색</Button>
+              </Flex>
+            </FormControl>
+            <Box mt="10" mb="10" style={{display: firstSearch ? 'none' : 'block'}}>
+              <Text fontSize="small" textAlign="center">검색어를 입력하고 검색 버튼을 눌러주세요</Text>
+            </Box>
+            <Box mt="10" mb="10" style={{display: searchRequired ? 'block' : 'none'}}>
+              <Text fontSize="small" textAlign="center">검색어를 입력해주세요</Text>
+            </Box>
+            <Box mt="10" mb="10" style={{display: onSearching ? 'block' : 'none'}}>
+              <Flex alignItems="center" justifyContent="center">
+                <Spinner />
+              </Flex>
+            </Box>
+            <Box mb="10" style={{display: (searchFlag && !onSearching) ? 'block' : 'none'}}>
+              <Text fontSize="small">총 {searchNum}개 검색됨 (이미지 클릭시 적용)</Text>
+              <Box>
+                <SimpleGrid mt="3" columns={4} spacing={2} id="image-grid-wrapper">
+                  {
+                    searchResult.map(item => {
+                      return <Image style={{}} key={itemKey++} src={item} onClick={() => {pickSearch(item);}} />
+                    })
+                  }
+                </SimpleGrid>
+              </Box>
+            </Box>            
+          </ModalBody>
+          <ModalFooter style={{display: onSearch ? 'none' : 'flex'}}>
+            <Button colorScheme='gray' mr="1" onClick={close}>닫기</Button>
             <Button colorScheme='gray' mr="1" onClick={saveItemGo}>추가하고 계속</Button>
             <Button colorScheme='purple' onClick={saveItem}>추가</Button>
             {/* <Button onClick={onClose} ml="1">취소</Button> */}
+          </ModalFooter>
+          <ModalFooter style={{display: onSearch ? 'flex' : 'none'}}>
           </ModalFooter>
         </ModalContent>
       </Modal>

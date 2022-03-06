@@ -13,3 +13,11 @@ body, #main {
   min-height: var(--vh);
   height: 100%;
 }
+
+#image-grid-wrapper img:hover {
+  border: 4px solid purple;
+}
+
+#image-grid-wrapper img {
+  cursor: pointer;
+}
