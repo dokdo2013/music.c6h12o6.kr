@@ -146,15 +146,15 @@ function SettingModal({isOpen, onOpen, onClose, data}) {
                 <TabPanel>
                   <Text fontSize="lg" fontWeight="semibold">Developed By</Text>
                   <br />
-                  <Text fontSize="sm">세주아리 (sothing00)</Text>
+                  <Text fontSize="sm">도연 (seju22)</Text>
                   <br />
                   <Text fontSize="lg" fontWeight="semibold">OpenSource</Text>
                   <br />
-                  <Text fontSize="sm">본 프로젝트는 오픈소스로 제작되었으며 GNU GPL v3.0 라이센스를 따릅니다. 라이센스 규정 위반시 관련 법령에 의해 처벌될 수 있습니다. 소스코드는 <Link href="https://github.com/yatchacha/music.c6h12o6.kr" color="purple.300" isExternal>깃허브(새 창)</Link>에 공개되어 있습니다.</Text>
+                  <Text fontSize="sm">본 프로젝트는 오픈소스로 제작되었으며 GNU GPL v3.0 라이센스를 따릅니다. 라이센스 규정 위반시 관련 법령에 의해 처벌될 수 있습니다. 소스코드는 <Link href="https://github.com/dokdo2013/music.c6h12o6.kr" color="purple.300" isExternal>깃허브(새 창)</Link>에 공개되어 있습니다.</Text>
                   <br />
                   <Text fontSize="lg" fontWeight="semibold">Copyrights</Text>
                   <br />
-                  <Text fontSize="sm">Copyrights © <span style={{fontWeight: 'bold'}}>c6h12o6.kr</span>. All Rights Reserved.</Text>
+                  <Text fontSize="sm">Copyrights © <span style={{fontWeight: 'bold'}}>music.c6h12o6.kr</span>. All Rights Reserved.</Text>
                   <Text fontSize="sm">TWITCH, the TWITCH Logo, the Glitch Logo, and/or TWITCHTV are trademarks of Twitch Interactive, Inc. or its affiliates.</Text>
                   <Text fontSize="sm">앨범아트의 저작권 일체는 음원 소유자에게 있습니다.</Text>
                   <br />
