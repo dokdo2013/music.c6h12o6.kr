@@ -21,3 +21,13 @@ body, #main {
 #image-grid-wrapper img {
   cursor: pointer;
 }
+
+#sortable-wrapper {
+  display: contents;
+}
+.handle {
+  cursor: pointer;
+}
+.sortable-ghost {
+  background-color: rgba(0,0,255,0.1);
+}

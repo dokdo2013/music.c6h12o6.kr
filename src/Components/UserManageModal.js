@@ -12,7 +12,7 @@ import {
   ModalHeader,
   ModalFooter,
   ModalBody,
-  ModalCloseButton,  
+  ModalCloseButton,
   Text,
   Tabs,
   Tab,
@@ -39,29 +39,36 @@ import {
   chakra,
   Tooltip,
   useToast,
-  useDisclosure
-} from '@chakra-ui/react';
-import {useState} from 'react';
-import { BsStar, BsStarFill, BsStarHalf } from 'react-icons/bs';
-import { FiShoppingCart, FiCopy, FiInfo } from 'react-icons/fi';
-import { RiFileCopy2Fill } from 'react-icons/ri';
-import { FaUserLock } from 'react-icons/fa';
+  useDisclosure,
+} from "@chakra-ui/react";
+import { useState } from "react";
+import { BsStar, BsStarFill, BsStarHalf } from "react-icons/bs";
+import { FiShoppingCart, FiCopy, FiInfo } from "react-icons/fi";
+import { RiFileCopy2Fill } from "react-icons/ri";
+import { FaUserLock } from "react-icons/fa";
 
-function UserManageModal({isOpen, onOpen, onClose, data}) {
-  const [show, setShow] = useState(false)
-  const handleClick = () => setShow(!show)
+function UserManageModal({ isOpen, onOpen, onClose, data }) {
+  const [show, setShow] = useState(false);
+  const handleClick = () => setShow(!show);
   const toast = useToast();
   const changeSuccess = () => {
     toast({
-      title: '변경사항이 저장되었습니다.',
-      status: 'success',
+      title: "변경사항이 저장되었습니다.",
+      status: "success",
       isClosable: true,
-    })
-  }
+    });
+  };
 
   return (
     <>
-      <Modal onClose={onClose} isOpen={isOpen} isCentered={false} colorScheme="puprle" scrollBehavior='inside' size="xl">
+      <Modal
+        onClose={onClose}
+        isOpen={isOpen}
+        isCentered={false}
+        colorScheme="puprle"
+        scrollBehavior="inside"
+        size="xl"
+      >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>회원 관리</ModalHeader>
@@ -75,7 +82,7 @@ function UserManageModal({isOpen, onOpen, onClose, data}) {
         </ModalContent>
       </Modal>
     </>
-  )
+  );
 }
 
 export default UserManageModal;
