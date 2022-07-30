@@ -8222,10 +8222,10 @@ react-scripts@5.0.1:
   optionalDependencies:
     fsevents "^2.3.2"
 
-react-scroll-to-top@1.0.8:
-  version "1.0.8"
-  resolved "https://registry.yarnpkg.com/react-scroll-to-top/-/react-scroll-to-top-1.0.8.tgz#b78731e77fb4463aa39907a3da9b153e2f0079a4"
-  integrity sha512-GXaRZnET2YUy+teAQTcd6qy3Dn8Xme4Qk+7AFhK/2DCwTuo0gu8+p6aARHyoG1TVcvzRE7QCCZYNiFZmy8HW7Q==
+react-scroll-to-top@1.0.9:
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/react-scroll-to-top/-/react-scroll-to-top-1.0.9.tgz#8bbff6d996495aa25b9e43f7990a1f97524486b3"
+  integrity sha512-15R4HRW90idCg2taYSK2Sox/bNBv2Vq9acgu8wbR4mMSclDkNbS3EBenxfUrYh4JHB2WpxWbBty3bb6hQPzScA==
 
 react-sortablejs@6.1.1:
   version "6.1.1"
