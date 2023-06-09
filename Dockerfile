@@ -1,5 +1,5 @@
 # Step 1: Build react application
-FROM node:18 as build
+FROM node:20 as build
 WORKDIR /app
 COPY package.json yarn.lock ./
 RUN yarn install
