@@ -27,7 +27,7 @@ jobs:
       with:
         context: .
         push: true
-        tags: hyeonwoo5342/music.c6h12o6.kr:${{ github.sha }}
+        tags: hyeonwoo5342/music.c6h12o6.kr:${{ github.run_number }}
 
   deploy:
     needs: build
@@ -44,12 +44,10 @@ jobs:
     - name: Update deployment tag in GitOps repo
       run: |
         APP_NAME="music.c6h12o6.kr"
-        ls
-        ls gitops/apps
         cd gitops/apps/${APP_NAME}
-        sed -i "s|image: hyeonwoo5342/${APP_NAME}:.*|image: hyeonwoo5342/${APP_NAME}:${{ github.sha }}|g" deployment.yaml
+        sed -i "s|image: hyeonwoo5342/${APP_NAME}:.*|image: hyeonwoo5342/${APP_NAME}:${{ github.run_number }}|g" deployment.yaml
         git config user.name "dokdo2013"
         git config user.email "hyeonwoo5342@gmail.com"
         git add .
-        git commit -m "feat(${APP_NAME}): Build and deploy new commit ${{ github.sha }}"
+        git commit -m "feat(${APP_NAME}): Build and deploy new commit ${{ github.run_number }}"
         git push
