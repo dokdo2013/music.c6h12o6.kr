@@ -45,8 +45,8 @@ jobs:
       run: |
         APP_NAME="music.c6h12o6.kr"
         ls
-        ls gitops/app
-        cd gitops/app/${APP_NAME}
+        ls gitops/apps
+        cd gitops/apps/${APP_NAME}
         sed -i "s|image: hyeonwoo5342/${APP_NAME}:.*|image: hyeonwoo5342/${APP_NAME}:${{ github.sha }}|g" deployment.yaml
         git config user.name "dokdo2013"
         git config user.email "hyeonwoo5342@gmail.com"
