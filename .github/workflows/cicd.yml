@@ -44,6 +44,8 @@ jobs:
     - name: Update deployment tag in GitOps repo
       run: |
         APP_NAME="music.c6h12o6.kr"
+        ls
+        ls gitops/app
         cd gitops/app/${APP_NAME}
         sed -i "s|image: hyeonwoo5342/${APP_NAME}:.*|image: hyeonwoo5342/${APP_NAME}:${{ github.sha }}|g" deployment.yaml
         git config user.name "dokdo2013"
