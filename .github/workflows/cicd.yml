@@ -35,10 +35,10 @@ jobs:
 
     steps:
     - name: Checkout GitOps repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         repository: dokdo2013/haenu-cluster
-        ssh-key: ${{ secrets.GITOPS_SSH_KEY }}
+        token: ${{ secrets.GITOPS_TOKEN }}
         path: gitops
 
     - name: Update deployment tag in GitOps repo
