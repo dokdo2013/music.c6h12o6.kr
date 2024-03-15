@@ -10,7 +10,7 @@
     "@testing-library/jest-dom": "5.17.0",
     "@testing-library/react": "13.4.0",
     "@testing-library/user-event": "14.5.1",
-    "axios": "0.27.2",
+    "axios": "1.6.8",
     "chakra-ui-autocomplete": "1.4.5",
     "framer-motion": "10.16.4",
     "react": "18.2.0",
